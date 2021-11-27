@@ -244,6 +244,26 @@
             <bold>false</bold>
            </font>
           </property>
+          <property name="styleSheet">
+           <string notr="true">QTabWidget::pane
+
+{
+
+border-width: 0px;
+
+border-color:white;
+
+border-style:outset;
+
+border-radius: 3px;
+
+background-color: rgb(132, 171, 208);
+
+background: transparent;
+
+}​
+</string>
+          </property>
           <property name="currentIndex">
            <number>0</number>
           </property>
@@ -278,6 +298,20 @@
            <attribute name="title">
             <string>详细信息</string>
            </attribute>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <property name="leftMargin">
+             <number>10</number>
+            </property>
+            <property name="rightMargin">
+             <number>10</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QTextBrowser" name="textBrowser"/>
+            </item>
+           </layout>
           </widget>
           <widget class="QWidget" name="filter">
            <attribute name="title">
@@ -298,7 +332,7 @@
      <x>0</x>
      <y>0</y>
      <width>1105</width>
-     <height>23</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -350,7 +384,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
    <addaction name="action_start"/>
    <addaction name="action_stop"/>

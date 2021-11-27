@@ -305,8 +305,8 @@
     <property name="title">
      <string>文件(F)</string>
     </property>
-    <addaction name="action_open"/>
-    <addaction name="action_save_as"/>
+    <addaction name="action_open_file_2"/>
+    <addaction name="action_save_as_2"/>
     <addaction name="separator"/>
     <addaction name="actions_quit"/>
    </widget>
@@ -314,10 +314,10 @@
     <property name="title">
      <string>捕获(C)</string>
     </property>
-    <addaction name="action_start_capture"/>
-    <addaction name="action_stop_capture"/>
-    <addaction name="action_restart_capture"/>
-    <addaction name="action_clean_all"/>
+    <addaction name="action_start_2"/>
+    <addaction name="action_stop_2"/>
+    <addaction name="action_restart_2"/>
+    <addaction name="action_clean_all_2"/>
    </widget>
    <widget class="QMenu" name="menu_T">
     <property name="title">
@@ -353,17 +353,30 @@
     <bool>false</bool>
    </attribute>
    <addaction name="action_start"/>
+   <addaction name="action_stop"/>
+   <addaction name="action_restart"/>
+   <addaction name="action_clean_all"/>
+   <addaction name="action_open_file"/>
+   <addaction name="action_save_as"/>
+   <addaction name="separator"/>
   </widget>
   <action name="action_start">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset>
-     <normaloff>img/Setting.png</normaloff>img/Setting.png</iconset>
+     <normaloff>img/start.png</normaloff>img/start.png</iconset>
    </property>
    <property name="text">
     <string>开始捕获</string>
    </property>
   </action>
-  <action name="action_open">
+  <action name="action_open_file_2">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/file.png</normaloff>img/file.png</iconset>
+   </property>
    <property name="text">
     <string>打开文件</string>
    </property>
@@ -371,7 +384,11 @@
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="action_save_as">
+  <action name="action_save_as_2">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/save.png</normaloff>img/save.png</iconset>
+   </property>
    <property name="text">
     <string>另存为</string>
    </property>
@@ -387,7 +404,11 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="action_start_capture">
+  <action name="action_start_2">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/start.png</normaloff>img/start.png</iconset>
+   </property>
    <property name="text">
     <string>开始</string>
    </property>
@@ -395,7 +416,11 @@
     <string>Ctrl+E</string>
    </property>
   </action>
-  <action name="action_stop_capture">
+  <action name="action_stop_2">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/stop.png</normaloff>img/stop.png</iconset>
+   </property>
    <property name="text">
     <string>停止</string>
    </property>
@@ -403,7 +428,11 @@
     <string>Ctrl+F</string>
    </property>
   </action>
-  <action name="action_restart_capture">
+  <action name="action_restart_2">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/reload.png</normaloff>img/reload.png</iconset>
+   </property>
    <property name="text">
     <string>重新开始</string>
    </property>
@@ -411,7 +440,11 @@
     <string>Ctrl+R</string>
    </property>
   </action>
-  <action name="action_clean_all">
+  <action name="action_clean_all_2">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/clear.png</normaloff>img/clear.png</iconset>
+   </property>
    <property name="text">
     <string>清除</string>
    </property>
@@ -478,6 +511,54 @@
   <action name="action_about_sniffer">
    <property name="text">
     <string>关于sniffer</string>
+   </property>
+  </action>
+  <action name="action_stop">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/stop.png</normaloff>img/stop.png</iconset>
+   </property>
+   <property name="text">
+    <string>停止捕获</string>
+   </property>
+  </action>
+  <action name="action_restart">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/reload.png</normaloff>img/reload.png</iconset>
+   </property>
+   <property name="text">
+    <string>重新开始</string>
+   </property>
+  </action>
+  <action name="action_clean_all">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/clear.png</normaloff>img/clear.png</iconset>
+   </property>
+   <property name="text">
+    <string>清除全部</string>
+   </property>
+  </action>
+  <action name="action_open_file">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/file.png</normaloff>img/file.png</iconset>
+   </property>
+   <property name="text">
+    <string>打开文件</string>
+   </property>
+  </action>
+  <action name="action_save_as">
+   <property name="icon">
+    <iconset>
+     <normaloff>img/save.png</normaloff>img/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>另存为</string>
+   </property>
+   <property name="toolTip">
+    <string>另存为...</string>
    </property>
   </action>
  </widget>

@@ -29,8 +29,8 @@ def set_toolbar():
 
 
 def exit():
-    reply = QMessageBox.question(ui, 'Message',
-                                 "Are you sure to quit?",
+    reply = QMessageBox.question(ui, '温馨提示',
+                                 "确定退出吗?",
                                  QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
     if reply == QMessageBox.Yes:
         ui.close()

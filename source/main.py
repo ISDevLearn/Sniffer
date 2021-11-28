@@ -1,9 +1,7 @@
-from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5 import uic
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
-from mainwindow import Ui_MainWindow
-from get_nif import get_nif
+from source.utils.get_nif import get_nif
 import sys
 
 

@@ -19,7 +19,7 @@
      <widget class="QWidget" name="widget_2" native="true">
       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2,1,6,1">
        <item>
-        <widget class="QComboBox" name="comboBox">
+        <widget class="QComboBox" name="if_box">
          <property name="minimumSize">
           <size>
            <width>0</width>

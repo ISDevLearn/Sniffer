@@ -3,6 +3,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QIcon
 from mainwindow import Ui_MainWindow
+from get_nif import get_nif
 import sys
 
 
@@ -17,6 +18,7 @@ class Loader:
         self.ui.table.horizontalHeader().setStretchLastSection(True)
         QTableWidget.resizeColumnsToContents(self.ui.table)
         QTableWidget.resizeRowsToContents(self.ui.table)
+        get_nif(self.ui.if_box)  # 获取网卡
 
 
 if __name__ == '__main__':

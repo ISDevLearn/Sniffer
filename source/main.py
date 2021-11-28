@@ -15,10 +15,10 @@ class Loader:
         self.ui.action_exit_2.triggered.connect(self.exit)
 
     def exit(self):
-        Reply = QMessageBox.question(self.ui, 'Message',
+        reply = QMessageBox.question(self.ui, 'Message',
                                      "Are you sure to quit?",
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if Reply == QMessageBox.Yes:
+        if reply == QMessageBox.Yes:
             self.ui.close()
 
     def modify(self):

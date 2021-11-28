@@ -13,6 +13,7 @@ class Loader:
 
         # 退出
         self.ui.action_exit.triggered.connect(self.exit)
+        self.ui.action_exit_2.triggered.connect(self.exit)
 
     def exit(self):
         Reply = QMessageBox.question(self.ui, 'Message',

@@ -308,7 +308,7 @@
     <addaction name="action_open_file_2"/>
     <addaction name="action_save_as_2"/>
     <addaction name="separator"/>
-    <addaction name="actions_exit_2"/>
+    <addaction name="action_exit_2"/>
    </widget>
    <widget class="QMenu" name="menu_C">
     <property name="title">
@@ -414,7 +414,10 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actions_exit_2">
+  <action name="action_exit_2">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset>
      <normaloff>img/exit.png</normaloff>img/exit.png</iconset>
@@ -688,6 +691,9 @@
    </property>
    <property name="text">
     <string>退出</string>
+   </property>
+   <property name="priority">
+    <enum>QAction::NormalPriority</enum>
    </property>
   </action>
  </widget>

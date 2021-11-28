@@ -10,8 +10,7 @@ import utils
 class Loader:
     def __init__(self):
         self.ui = uic.loadUi("main_window.ui")
-        utils.ui = self.ui
-        utils.modify()
+        utils.modify(self.ui)
 
 
 if __name__ == '__main__':
@@ -23,5 +22,5 @@ if __name__ == '__main__':
 
     # 显示窗口
     loader = Loader()
-    loader.ui.show()
+    loader.ui.showMaximized()
     sys.exit(app.exec_())

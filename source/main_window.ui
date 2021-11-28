@@ -159,6 +159,9 @@
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
+          <property name="rowCount">
+           <number>0</number>
+          </property>
           <attribute name="horizontalHeaderVisible">
            <bool>true</bool>
           </attribute>
@@ -177,11 +180,6 @@
           <attribute name="verticalHeaderVisible">
            <bool>false</bool>
           </attribute>
-          <row>
-           <property name="text">
-            <string>id</string>
-           </property>
-          </row>
           <column>
            <property name="text">
             <string>序号</string>

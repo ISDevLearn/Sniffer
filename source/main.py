@@ -10,6 +10,16 @@ class Loader:
         self.ui = uic.loadUi("main_window.ui")
         self.modify()
 
+        # 退出
+        self.ui.action_exit.triggered.connect(self.exit)
+
+    def exit(self):
+        Reply = QMessageBox.question(self.ui, 'Message',
+                                     "Are you sure to quit?",
+                                     QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        if Reply == QMessageBox.Yes:
+            self.ui.close()
+
     def modify(self):
         self.ui.table_wrapper.auto_scroll = True
         self.ui.table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)

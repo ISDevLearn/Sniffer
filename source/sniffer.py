@@ -33,7 +33,7 @@ class Sniffer:
     def get_protocol(self, p: Packet):
         protocol_list = p.summary().split('/')
         # protocol_list:  ['Ether ', ' IP ', ' TCP 192.168.31.253:8051 > 175.27.204.206:https FA']
-        print(protocol_list)
+        # print(protocol_list)
         arp_protocol_list = ['ARP', 'RARP', 'DHCP']
         # arp protocol_list:  ['Ether ', ' ARP who has 192.168.31.1 says 192.168.31.253']
         for protocol in arp_protocol_list:
@@ -76,7 +76,10 @@ class Sniffer:
                 info = protocol_list[-1]
             # tcp/udp ['Ether ', ' IP ', ' UDP 192.168.31.253:54915 > 172.19.83.255:54915 ', ' Raw']
             elif 'TCP' in protocol or 'UDP' in protocol:
-                info = protocol_list[2]
+                ip_list = protocol_list[2:]
+                info = ""
+                for s in ip_list:
+                    info += s
             else:
                 ip_list = protocol_list[1:]
                 info = ""

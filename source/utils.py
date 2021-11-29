@@ -64,6 +64,9 @@ def set_toolbar():
     ui.action_clean_all.triggered.connect(clean_all)
     ui.action_clean_all_2.triggered.connect(clean_all)
 
+    ui.action_restart.triggered.connect(restart)
+    ui.action_restart_2.triggered.connect(restart)
+
 
 def set_if_box():
     ui.if_box.currentIndexChanged.connect(check_nif)
@@ -114,6 +117,14 @@ def start():
     ui.action_clean_all.setEnabled(False)
     ui.action_save_as.setEnabled(False)
     ui.action_exit.setEnabled(False)
+    ui.action_open_file.setEnabled(False)
+
+
+# 重新开始嗅探
+def restart():
+    ui.table.clearContents()
+    ui.table.setRowCount(0)
+    start()
 
 
 # 停止嗅探
@@ -127,7 +138,7 @@ def stop():
     ui.action_exit.setEnabled(True)
 
 
-# 清除内容，目前有点寄，没有重置表格
+# 清除内容
 def clean_all():
     reply = QMessageBox.question(ui, '温馨提示',
                                  "该操作将会清除所有内容！",

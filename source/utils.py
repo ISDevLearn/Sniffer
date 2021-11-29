@@ -17,6 +17,7 @@ def modify(_ui: QWidget):
     get_nif(ui.if_box)  # 获取网卡
     initialize()  # 初始化
     set_toolbar()  # 设置工具栏操作
+    set_if_box()
     set_signal()  # 设置信号
 
 
@@ -27,20 +28,10 @@ def get_nif(if_box: QComboBox):
     return if_list
 
 
-# 检测网卡，如果没有选定的话开始按钮无法按下
-def check_nif():
-    if get_nif(ui.if_box):
-        ui.action_start.setEnabled(True)
-        ui.action_restart.setEnabled(True)
-    else:
-        ui.action_start.setEnabled(False)
-        ui.action_restart.setEnabled(False)
-
-
 # 初始化动作
 def initialize():
+    ui.action_start.setEnabled(False)
     ui.action_stop.setEnabled(False)
-    check_nif()
     ui.action_restart.setEnabled(False)
     ui.action_clean_all.setEnabled(False)
     ui.action_save_as.setEnabled(False)
@@ -59,12 +50,19 @@ def set_table(table: QTableWidget):
 def set_toolbar():
     ui.action_exit.triggered.connect(exit)
     ui.action_exit_2.triggered.connect(exit)
+
     ui.action_start.triggered.connect(start)
     ui.action_start_2.triggered.connect(start)
+
     ui.action_stop.triggered.connect(stop)
     ui.action_stop_2.triggered.connect(stop)
+
     ui.action_clean_all.triggered.connect(clean_all)
     ui.action_clean_all_2.triggered.connect(clean_all)
+
+
+def set_if_box():
+    ui.if_box.currentIndexChanged.connect(check_nif)
 
 
 # 设置信号
@@ -79,6 +77,16 @@ def exit():
                                  QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
     if reply == QMessageBox.Yes:
         ui.close()
+
+
+# 检测网卡，如果没有选定的话开始按钮无法按下
+def check_nif(index):
+    if index != 0:
+        ui.action_start.setEnabled(True)
+        ui.action_restart.setEnabled(True)
+    else:
+        ui.action_start.setEnabled(False)
+        ui.action_restart.setEnabled(False)
 
 
 # 添加行
@@ -109,8 +117,9 @@ def start():
 # 停止嗅探
 def stop():
     s.stop()
-    check_nif()
     ui.action_stop.setEnabled(False)
+    ui.action_restart.setEnabled(True)
+    ui.action_start.setEnabled(True)
     ui.action_clean_all.setEnabled(True)
     ui.action_save_as.setEnabled(True)
     ui.action_exit.setEnabled(True)
@@ -123,3 +132,4 @@ def clean_all():
                                  QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
     if reply == QMessageBox.Yes:
         ui.table.clearContents()
+        ui.table.setRowCount(0)

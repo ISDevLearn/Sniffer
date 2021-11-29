@@ -66,7 +66,7 @@ class Sniffer:
             if 'ARP' in protocol:
                 ARP_info = protocol_list[1].strip().split(' ')[1:]
                 if ARP_info[0] == 'who' and ARP_info[1] == 'has':
-                    info = "Who has " + ARP_info[2] + "? Tell " + ARP_info[4]
+                    info = " Who has " + ARP_info[2] + "? Tell " + ARP_info[4]
                 elif ARP_info[0] == 'is' and ARP_info[1] == 'at':
                     info = ARP_info[4] + "is at " + ARP_info[2]
                 else:

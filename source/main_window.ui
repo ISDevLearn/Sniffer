@@ -14,6 +14,11 @@
    <string>PyQt Playground</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="font">
+    <font>
+     <family>苹方 中等</family>
+    </font>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout" stretch="1,12">
     <item>
      <widget class="QWidget" name="widget_2" native="true">
@@ -465,6 +470,11 @@ background: transparent;
    </property>
    <property name="text">
     <string>打开文件</string>
+   </property>
+   <property name="font">
+    <font>
+     <family>苹方 中等</family>
+    </font>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>

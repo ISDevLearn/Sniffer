@@ -48,24 +48,17 @@ def set_table(table: QTableWidget):
     table.setColumnWidth(4, 100)
     table.setColumnWidth(5, 50)
     table.horizontalHeader().setStretchLastSection(True)
+    # 选择行
+    table.setSelectionBehavior(QAbstractItemView.SelectRows)
 
 
 # 设置工具栏操作
 def set_toolbar():
     ui.action_exit.triggered.connect(exit)
-    ui.action_exit_2.triggered.connect(exit)
-
     ui.action_start.triggered.connect(start)
-    ui.action_start_2.triggered.connect(start)
-
     ui.action_stop.triggered.connect(stop)
-    ui.action_stop_2.triggered.connect(stop)
-
     ui.action_clean_all.triggered.connect(clean_all)
-    ui.action_clean_all_2.triggered.connect(clean_all)
-
     ui.action_restart.triggered.connect(restart)
-    ui.action_restart_2.triggered.connect(restart)
 
 
 def set_if_box():
@@ -118,6 +111,7 @@ def start():
     ui.action_save_as.setEnabled(False)
     ui.action_exit.setEnabled(False)
     ui.action_open_file.setEnabled(False)
+    ui.action_filter.setEnabled(False)
 
 
 # 重新开始嗅探
@@ -135,14 +129,16 @@ def stop():
     ui.action_start.setEnabled(True)
     ui.action_clean_all.setEnabled(True)
     ui.action_save_as.setEnabled(True)
+    ui.action_open_file.setEnabled(True)
+    ui.action_filter.setEnabled(True)
     ui.action_exit.setEnabled(True)
 
 
 # 清除内容
 def clean_all():
-    reply = QMessageBox.question(ui, '温馨提示',
-                                 "该操作将会清除所有内容！",
-                                 QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+    reply = QMessageBox.warning(ui, '温馨提示',
+                                "该操作将会清除所有内容！",
+                                QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
     if reply == QMessageBox.Yes:
         ui.table.clearContents()
         ui.table.setRowCount(0)

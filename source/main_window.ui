@@ -497,30 +497,30 @@ background: transparent;
     <property name="title">
      <string>文件(F)</string>
     </property>
-    <addaction name="action_open_file_2"/>
-    <addaction name="action_save_as_2"/>
+    <addaction name="action_open_file"/>
+    <addaction name="action_save_as"/>
     <addaction name="separator"/>
-    <addaction name="action_exit_2"/>
+    <addaction name="action_exit"/>
    </widget>
    <widget class="QMenu" name="menu_C">
     <property name="title">
      <string>捕获(C)</string>
     </property>
-    <addaction name="action_start_2"/>
-    <addaction name="action_stop_2"/>
-    <addaction name="action_restart_2"/>
-    <addaction name="action_clean_all_2"/>
+    <addaction name="action_start"/>
+    <addaction name="action_stop"/>
+    <addaction name="action_restart"/>
+    <addaction name="action_clean_all"/>
    </widget>
    <widget class="QMenu" name="menu_T">
     <property name="title">
      <string>工具(T)</string>
     </property>
-    <addaction name="action_filter_2"/>
-    <addaction name="action_show_details_2"/>
-    <addaction name="action_reassemble_2"/>
-    <addaction name="action_choose_file_type_2"/>
-    <addaction name="action_search_to_file_2"/>
-    <addaction name="action_tcp_to_file_2"/>
+    <addaction name="action_filter"/>
+    <addaction name="action_show_details"/>
+    <addaction name="action_reassemble"/>
+    <addaction name="action_choose_file_type"/>
+    <addaction name="action_search_to_file"/>
+    <addaction name="action_tcp_to_file"/>
    </widget>
    <widget class="QMenu" name="menu_H">
     <property name="title">
@@ -589,174 +589,10 @@ background: transparent;
      <normaloff>img/start.png</normaloff>img/start.png</iconset>
    </property>
    <property name="text">
-    <string>开始捕获</string>
-   </property>
-  </action>
-  <action name="action_open_file_2">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/file.png</normaloff>img/file.png</iconset>
-   </property>
-   <property name="text">
-    <string>打开文件</string>
-   </property>
-   <property name="font">
-    <font>
-     <family>苹方 中等</family>
-    </font>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
-   </property>
-  </action>
-  <action name="action_save_as_2">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/save.png</normaloff>img/save.png</iconset>
-   </property>
-   <property name="text">
-    <string>另存为</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
-  </action>
-  <action name="action_exit_2">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset>
-     <normaloff>img/exit.png</normaloff>img/exit.png</iconset>
-   </property>
-   <property name="text">
-    <string>退出</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Q</string>
-   </property>
-  </action>
-  <action name="action_start_2">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/start.png</normaloff>img/start.png</iconset>
-   </property>
-   <property name="text">
     <string>开始</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+E</string>
-   </property>
-  </action>
-  <action name="action_stop_2">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/stop.png</normaloff>img/stop.png</iconset>
-   </property>
-   <property name="text">
-    <string>停止</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+F</string>
-   </property>
-  </action>
-  <action name="action_restart_2">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/reload.png</normaloff>img/reload.png</iconset>
-   </property>
-   <property name="text">
-    <string>重新开始</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+R</string>
-   </property>
-  </action>
-  <action name="action_clean_all_2">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/clear.png</normaloff>img/clear.png</iconset>
-   </property>
-   <property name="text">
-    <string>清除</string>
-   </property>
-   <property name="iconText">
-    <string>清除</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+C</string>
-   </property>
-  </action>
-  <action name="action_filter_2">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/filter.png</normaloff>img/filter.png</iconset>
-   </property>
-   <property name="text">
-    <string>过滤器</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+F</string>
-   </property>
-  </action>
-  <action name="action_show_details_2">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/detail.png</normaloff>img/detail.png</iconset>
-   </property>
-   <property name="text">
-    <string>显示详情</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+D</string>
-   </property>
-  </action>
-  <action name="action_reassemble_2">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/reassemble.png</normaloff>img/reassemble.png</iconset>
-   </property>
-   <property name="text">
-    <string>重组</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+M</string>
-   </property>
-  </action>
-  <action name="action_choose_file_type_2">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/chooseFileType.png</normaloff>img/chooseFileType.png</iconset>
-   </property>
-   <property name="text">
-    <string>选择文件类型</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+P</string>
-   </property>
-  </action>
-  <action name="action_search_to_file_2">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/searchToFile.png</normaloff>img/searchToFile.png</iconset>
-   </property>
-   <property name="text">
-    <string>SerachToFile</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+H</string>
-   </property>
-  </action>
-  <action name="action_tcp_to_file_2">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/tcpToFile.png</normaloff>img/tcpToFile.png</iconset>
-   </property>
-   <property name="text">
-    <string>TcpToFile</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+T</string>
    </property>
   </action>
   <action name="action_help_doc">
@@ -783,7 +619,10 @@ background: transparent;
      <normaloff>img/stop.png</normaloff>img/stop.png</iconset>
    </property>
    <property name="text">
-    <string>停止捕获</string>
+    <string>停止</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
   <action name="action_restart">
@@ -794,6 +633,9 @@ background: transparent;
    <property name="text">
     <string>重新开始</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
   </action>
   <action name="action_clean_all">
    <property name="icon">
@@ -801,7 +643,10 @@ background: transparent;
      <normaloff>img/clear.png</normaloff>img/clear.png</iconset>
    </property>
    <property name="text">
-    <string>清除全部</string>
+    <string>清除</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
    </property>
   </action>
   <action name="action_open_file">
@@ -811,6 +656,9 @@ background: transparent;
    </property>
    <property name="text">
     <string>打开文件</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="action_save_as">
@@ -824,6 +672,9 @@ background: transparent;
    <property name="toolTip">
     <string>另存为...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="action_show_details">
    <property name="icon">
@@ -832,6 +683,9 @@ background: transparent;
    </property>
    <property name="text">
     <string>显示详情</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
   <action name="action_filter">
@@ -842,6 +696,9 @@ background: transparent;
    <property name="text">
     <string>过滤器</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
   </action>
   <action name="action_reassemble">
    <property name="icon">
@@ -851,6 +708,9 @@ background: transparent;
    <property name="text">
     <string>重组</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
   </action>
   <action name="action_choose_file_type">
    <property name="icon">
@@ -859,6 +719,9 @@ background: transparent;
    </property>
    <property name="text">
     <string>选择文件类型</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="action_back">
@@ -881,6 +744,9 @@ background: transparent;
    <property name="text">
     <string>SearchToFile</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
   </action>
   <action name="action_tcp_to_file">
    <property name="icon">
@@ -890,6 +756,9 @@ background: transparent;
    <property name="text">
     <string>TcpToFile</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
   </action>
   <action name="action_exit">
    <property name="icon">
@@ -898,6 +767,9 @@ background: transparent;
    </property>
    <property name="text">
     <string>退出</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
    <property name="priority">
     <enum>QAction::NormalPriority</enum>

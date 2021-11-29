@@ -1,6 +1,6 @@
 from scapy.all import *
 from PyQt5.QtWidgets import *
-import signal
+from PyQt5.QtGui import *
 import sniffer
 
 global ui
@@ -12,7 +12,9 @@ signals = sniffer.signals
 
 def modify(_ui: QWidget):
     global ui
+    global s
     ui = _ui
+    s = sniffer.Sniffer(ui)
     set_table(ui.table)
     get_nif(ui.if_box)  # 获取网卡
     initialize()  # 初始化
@@ -40,10 +42,12 @@ def initialize():
 # 设置信息展示表格
 def set_table(table: QTableWidget):
     table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+    table.setColumnWidth(0, 50)
+    table.setColumnWidth(2, 150)
+    table.setColumnWidth(3, 150)
+    table.setColumnWidth(4, 100)
+    table.setColumnWidth(5, 50)
     table.horizontalHeader().setStretchLastSection(True)
-    # table.verticalScrollBar()
-    QTableWidget.resizeColumnsToContents(table)
-    QTableWidget.resizeRowsToContents(table)
 
 
 # 设置工具栏操作
@@ -81,7 +85,7 @@ def exit():
 
 # 检测网卡，如果没有选定的话开始按钮无法按下
 def check_nif(index):
-    if index != 0:
+    if index != 0 and not s.is_running:
         ui.action_start.setEnabled(True)
         ui.action_restart.setEnabled(True)
     else:
@@ -90,21 +94,19 @@ def check_nif(index):
 
 
 # 添加行
-def add_row(info: list):
+def add_row(info: list, color: QColor):
     table: QTableWidget = ui.table
     rows = table.rowCount()
     table.insertRow(rows)
     for i in range(7):
-        table.setItem(rows, i, QTableWidgetItem(str(info[i])))
-    # table.setItem(rows, 0, QTableWidgetItem(info))
+        item = QTableWidgetItem(str(info[i]))
+        item.setBackground(color)
+        table.setItem(rows, i, item)
     table.scrollToBottom()
 
 
 # 开始嗅探
 def start():
-    global s
-    # signals.update_table.emit([1, 2, 3, 4, 5, 6, 7])
-    s = sniffer.Sniffer(ui)
     s.start()
     ui.action_stop.setEnabled(True)
     ui.action_start.setEnabled(False)

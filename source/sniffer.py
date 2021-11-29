@@ -1,8 +1,8 @@
 from scapy.all import *
-from PyQt5 import QtCore
 from PyQt5.QtWidgets import *
-import threading
+from PyQt5.QtGui import *
 import time
+import re
 import signal
 
 
@@ -17,18 +17,22 @@ class Sniffer:
         self.number = 0
         self.time = 0
         self.sniffer = None
+        self.is_running = False
 
     def start(self):
         self.nif = self.ui.if_box.currentText()
         if self.nif == '网卡':
             return
         print(self.nif)
+        self.is_running = True
+        self.number = 0
         self.sniffer = AsyncSniffer(iface=self.nif, prn=self.handle)
         self.time = time.time()
         self.sniffer.start()
 
     def stop(self):
         self.sniffer.stop()
+        self.is_running = False
 
     def get_protocol(self, p: Packet):
         protocol_list = p.summary().split('/')
@@ -57,34 +61,34 @@ class Sniffer:
             protocol += protocol_list[2].split(' ')[1]
             return protocol
 
-    def get_info(self, p: Packet):
+    def get_info(self, p: Packet, protocol):
         protocol_list = p.summary().split("/")
         if "Ether" in protocol_list[0]:
-            protocol = self.get_protocol(p)
+            # protocol = self.get_protocol(p)
             # arp protocol_list:  ['Ether ', ' ARP who has 192.168.31.1 says 192.168.31.253']
             # ['Ether ', ' ARP is at 54:48:e6:99:c9:1c says 192.168.31.1']
             if 'ARP' in protocol:
-                ARP_info = protocol_list[1].strip().split(' ')[1:]
-                if ARP_info[0] == 'who' and ARP_info[1] == 'has':
-                    info = " Who has " + ARP_info[2] + "? Tell " + ARP_info[4]
-                elif ARP_info[0] == 'is' and ARP_info[1] == 'at':
-                    info = ARP_info[4] + "is at " + ARP_info[2]
+                arp_info = protocol_list[1].strip()
+                pattern_request = r'ARP who has (\S+) says (\S+)'
+                pattern_reply = r'ARP is at (\S+) says (\S+)'
+                if match := re.match(pattern_request, arp_info):
+                    target = match.group(1)
+                    sender = match.group(2)
+                    info = f'Who has {target}? Tell {sender}'
+                elif match := re.match(pattern_reply, arp_info):
+                    mac = match.group(1)
+                    sender = match.group(2)
+                    info = f'{sender} is at {mac}'
                 else:
                     info = protocol_list[1].strip()
             # DNS protocol_list:  ['Ether ', ' IP ', ' UDP ', ' DNS Qry "b\'lb._dns-sd._udp.local.\'" ']
             elif 'DNS' in protocol:
-                info = protocol_list[-1]
+                info = protocol_list[-1].strip()
             # tcp/udp ['Ether ', ' IP ', ' UDP 192.168.31.253:54915 > 172.19.83.255:54915 ', ' Raw']
             elif 'TCP' in protocol or 'UDP' in protocol:
-                ip_list = protocol_list[2:]
-                info = ""
-                for s in ip_list:
-                    info += s
+                info = ' '.join(protocol_list[2:]).strip()
             else:
-                ip_list = protocol_list[1:]
-                info = ""
-                for s in ip_list:
-                    info += s
+                info = ' '.join(protocol_list[1:]).strip()
             return info
         else:
             return p.summary()
@@ -96,7 +100,21 @@ class Sniffer:
         else:
             src = p[0].src
             dst = p[0].dst
+            if dst == 'ff:ff:ff:ff:ff:ff':
+                dst = 'Broadcast'
         return src, dst
+
+    def get_color(self, protocol):
+        if protocol == 'TCP':
+            return QColor('#E7E6FF')
+        elif protocol == 'UDP' or protocol == 'DNS':
+            return QColor('#DAEEFF')
+        elif protocol == 'ICMP':
+            return QColor('#FCE0FF')
+        elif protocol == 'ARP':
+            return QColor('#FAF0D7')
+        else:
+            return QColor('#FFFFFF')
 
     def handle(self, p: Packet):
         self.number += 1
@@ -107,9 +125,10 @@ class Sniffer:
         packet_time = str(p.time-self.time)[0:9]
         src, dst = self.get_src_and_dst(p)
         protocol = self.get_protocol(p)
+        color = self.get_color(protocol)
         length = len(p)
-        info = self.get_info(p)
+        info = self.get_info(p, protocol)
 
-        signals.update_table.emit([self.number, packet_time, src, dst, protocol, length, info])
+        signals.update_table.emit([self.number, packet_time, src, dst, protocol, length, info], color)
 
 

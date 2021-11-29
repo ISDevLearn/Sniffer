@@ -50,6 +50,8 @@ def set_table(table: QTableWidget):
     table.horizontalHeader().setStretchLastSection(True)
     # 选择行
     table.setSelectionBehavior(QAbstractItemView.SelectRows)
+    # 双击选中行，进入详情展示
+    table.cellDoubleClicked.connect(show_detail)
 
 
 # 设置工具栏操作
@@ -77,6 +79,11 @@ def exit():
                                  QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
     if reply == QMessageBox.Yes:
         ui.close()
+
+
+# 选中行后展示详情
+def show_detail():
+    print("111")
 
 
 # 检测网卡，如果没有选定的话开始按钮无法按下

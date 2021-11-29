@@ -22,6 +22,11 @@
    <layout class="QVBoxLayout" name="verticalLayout" stretch="1,12">
     <item>
      <widget class="QWidget" name="widget_2" native="true">
+      <property name="font">
+       <font>
+        <family>苹方 中等</family>
+       </font>
+      </property>
       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="2,1,6,1">
        <item>
         <widget class="QComboBox" name="if_box">
@@ -75,7 +80,7 @@
          </property>
          <property name="font">
           <font>
-           <family>苹方字体</family>
+           <family>苹方 中等</family>
           </font>
          </property>
          <property name="placeholderText">
@@ -99,7 +104,7 @@
          </property>
          <property name="font">
           <font>
-           <family>苹方字体</family>
+           <family>苹方 中等</family>
            <pointsize>10</pointsize>
           </font>
          </property>
@@ -149,7 +154,7 @@
        </property>
        <property name="font">
         <font>
-         <family>苹方字体</family>
+         <family>苹方 中等</family>
         </font>
        </property>
        <layout class="QGridLayout" name="gridLayout" columnstretch="0">
@@ -317,7 +322,13 @@ background: transparent;
              <number>0</number>
             </property>
             <item row="0" column="0">
-             <widget class="QTextBrowser" name="textBrowser"/>
+             <widget class="QTextBrowser" name="textBrowser">
+              <property name="font">
+               <font>
+                <family>苹方 中等</family>
+               </font>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>

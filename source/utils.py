@@ -56,16 +56,10 @@ def set_table():
 # 设置工具栏操作
 def set_toolbar():
     ui.action_exit.triggered.connect(exit)
-    ui.action_exit_2.triggered.connect(exit)
-
     ui.action_start.triggered.connect(start)
-    ui.action_start_2.triggered.connect(start)
-
     ui.action_stop.triggered.connect(stop)
-    ui.action_stop_2.triggered.connect(stop)
-
     ui.action_clean_all.triggered.connect(clean_all)
-    ui.action_clean_all_2.triggered.connect(clean_all)
+    ui.action_restart.triggered.connect(restart)
 
 
 def set_if_box():
@@ -118,6 +112,15 @@ def start():
     ui.action_clean_all.setEnabled(False)
     ui.action_save_as.setEnabled(False)
     ui.action_exit.setEnabled(False)
+    ui.action_open_file.setEnabled(False)
+    ui.action_filter.setEnabled(True)
+
+
+# 重新开始
+def restart():
+    ui.table.clearContents()
+    ui.table.setRowCount(0)
+    start()
 
 
 # 停止嗅探
@@ -128,6 +131,8 @@ def stop():
     ui.action_start.setEnabled(True)
     ui.action_clean_all.setEnabled(True)
     ui.action_save_as.setEnabled(True)
+    ui.action_open_file.setEnabled(True)
+    ui.action_filter.setEnabled(True)
     ui.action_exit.setEnabled(True)
 
 

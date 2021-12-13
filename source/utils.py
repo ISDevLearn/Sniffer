@@ -1,7 +1,9 @@
 from scapy.all import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
+from packet import PacketInfo
 import sniffer
+
 
 global ui
 global s
@@ -15,7 +17,7 @@ def modify(_ui: QWidget):
     global s
     ui = _ui
     s = sniffer.Sniffer(ui)
-    set_table(ui.table)
+    set_table()
     get_nif(ui.if_box)  # 获取网卡
     initialize()  # 初始化
     set_toolbar()  # 设置工具栏操作
@@ -40,14 +42,16 @@ def initialize():
 
 
 # 设置信息展示表格
-def set_table(table: QTableWidget):
-    table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
-    table.setColumnWidth(0, 50)
-    table.setColumnWidth(2, 150)
-    table.setColumnWidth(3, 150)
-    table.setColumnWidth(4, 100)
-    table.setColumnWidth(5, 50)
-    table.horizontalHeader().setStretchLastSection(True)
+def set_table():
+    ui.table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+    ui.table.setColumnWidth(0, 50)
+    ui.table.setColumnWidth(2, 150)
+    ui.table.setColumnWidth(3, 150)
+    ui.table.setColumnWidth(4, 100)
+    ui.table.setColumnWidth(5, 50)
+    ui.table.horizontalHeader().setStretchLastSection(True)
+    ui.table.itemClicked.connect(show_detail)
+    # ui.table.itemClicked.connect(change_color)
 
 
 # 设置工具栏操作
@@ -94,13 +98,14 @@ def check_nif(index):
 
 
 # 添加行
-def add_row(info: list, color: QColor):
+def add_row(packet_info: PacketInfo):
     table: QTableWidget = ui.table
     rows = table.rowCount()
     table.insertRow(rows)
-    for i in range(7):
-        item = QTableWidgetItem(str(info[i]))
-        item.setBackground(color)
+    headers = ['number', 'time', 'src', 'dst', 'protocol', 'length', 'info']
+    for i, header in enumerate(headers):
+        item = QTableWidgetItem(str(packet_info.__dict__[header]))
+        item.setBackground(packet_info.color)
         table.setItem(rows, i, item)
     table.scrollToBottom()
 
@@ -127,7 +132,7 @@ def stop():
     ui.action_exit.setEnabled(True)
 
 
-# 清除内容，目前有点寄，没有重置表格
+# 清除内容
 def clean_all():
     reply = QMessageBox.question(ui, '温馨提示',
                                  "该操作将会清除所有内容！",
@@ -135,3 +140,17 @@ def clean_all():
     if reply == QMessageBox.Yes:
         ui.table.clearContents()
         ui.table.setRowCount(0)
+
+
+def show_detail(item: QTableWidgetItem):
+    row = item.row()
+    info = s.packets[row].detail_info
+    print(info)
+
+
+# 有问题
+def change_color(item: QTableWidgetItem):
+    current_color = item.background().color()
+    color = hex(current_color.darker(120).rgb())[4:10]
+    ui.table.setStyleSheet('QTableWidget::item:selected{background-color: #' + color + '}')
+    print(color)

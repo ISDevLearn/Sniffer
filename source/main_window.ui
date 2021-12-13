@@ -322,13 +322,7 @@ background: transparent;
              <number>0</number>
             </property>
             <item row="0" column="0">
-             <widget class="QTextBrowser" name="textBrowser">
-              <property name="font">
-               <font>
-                <family>苹方 中等</family>
-               </font>
-              </property>
-             </widget>
+             <widget class="QTreeWidget" name="detail_tree"/>
             </item>
            </layout>
           </widget>

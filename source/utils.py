@@ -1,6 +1,5 @@
 from scapy.all import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
 from packet import PacketInfo
 import sniffer
 
@@ -143,12 +142,25 @@ def clean_all():
 
 
 def show_detail(item: QTableWidgetItem):
+    tree: QTreeWidget = ui.detail_tree
+    tree.clear()
     row = item.row()
     info = s.packets[row].detail_info
-    print(info)
+    for layer, layer_info in info.items():
+        root = QTreeWidgetItem(tree)
+        root.setText(0, layer)
+        if layer_info:
+            for key, value in layer_info.items():
+                if value is None:
+                    value = ''
+                node = QTreeWidgetItem(root)
+                node.setText(0, key)
+                node.setText(1, value)
+                root.addChild(node)
+    tree.expandAll()
 
 
-# 有问题
+# 有点寄 先不用了
 def change_color(item: QTableWidgetItem):
     current_color = item.background().color()
     color = hex(current_color.darker(120).rgb())[4:10]

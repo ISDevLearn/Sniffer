@@ -322,7 +322,21 @@ background: transparent;
              <number>0</number>
             </property>
             <item row="0" column="0">
-             <widget class="QTreeWidget" name="detail_tree"/>
+             <widget class="QTreeWidget" name="detail_tree">
+              <property name="autoExpandDelay">
+               <number>-1</number>
+              </property>
+              <column>
+               <property name="text">
+                <string>字段</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>值</string>
+               </property>
+              </column>
+             </widget>
             </item>
            </layout>
           </widget>

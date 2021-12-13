@@ -1,6 +1,6 @@
 from scapy.all import *
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
+from packet import PacketInfo
 import time
 import re
 import signal
@@ -18,6 +18,8 @@ class Sniffer:
         self.time = 0
         self.sniffer = None
         self.is_running = False
+        self.current_packet = None
+        self.packets = []
 
     def start(self):
         self.nif = self.ui.if_box.currentText()
@@ -25,7 +27,7 @@ class Sniffer:
             return
         print(self.nif)
         self.is_running = True
-        self.number = 0
+        self.current_packet = None
         self.sniffer = AsyncSniffer(iface=self.nif, prn=self.handle)
         self.time = time.time()
         self.sniffer.start()
@@ -34,8 +36,8 @@ class Sniffer:
         self.sniffer.stop()
         self.is_running = False
 
-    def get_protocol(self, p: Packet):
-        protocol_list = p.summary().split('/')
+    def get_protocol(self):
+        protocol_list = self.current_packet.summary().split('/')
         # protocol_list:  ['Ether ', ' IP ', ' TCP 192.168.31.253:8051 > 175.27.204.206:https FA']
         # print(protocol_list)
         arp_protocol_list = ['ARP', 'RARP', 'DHCP']
@@ -49,6 +51,7 @@ class Sniffer:
             else:
                 upper_protocol = protocol_list[-1]
             return upper_protocol.strip().split(' ')[0]
+        # if 'TCP' in p.summary
         # ipv6:
         # ['Ether ', ' IPv6 ', ' UDP ', ' DNS Ans "fe80::10e1:13bd:be7:8c38" ']
         elif 'IPv6' in protocol_list[1]:
@@ -61,8 +64,8 @@ class Sniffer:
             protocol += protocol_list[2].split(' ')[1]
             return protocol
 
-    def get_info(self, p: Packet, protocol):
-        protocol_list = p.summary().split("/")
+    def get_info(self, protocol):
+        protocol_list = self.current_packet.summary().split("/")
         if "Ether" in protocol_list[0]:
             # protocol = self.get_protocol(p)
             # arp protocol_list:  ['Ether ', ' ARP who has 192.168.31.1 says 192.168.31.253']
@@ -91,44 +94,31 @@ class Sniffer:
                 info = ' '.join(protocol_list[1:]).strip()
             return info
         else:
-            return p.summary()
+            return self.current_packet.summary()
 
-    def get_src_and_dst(self, p: Packet):
-        if p.haslayer('IP'):
-            src = p['IP'].src
-            dst = p['IP'].dst
+    def get_src_and_dst(self):
+        if self.current_packet.haslayer('IP'):
+            src = self.current_packet['IP'].src
+            dst = self.current_packet['IP'].dst
         else:
-            src = p[0].src
-            dst = p[0].dst
+            src = self.current_packet[0].src
+            dst = self.current_packet[0].dst
             if dst == 'ff:ff:ff:ff:ff:ff':
                 dst = 'Broadcast'
         return src, dst
 
-    def get_color(self, protocol):
-        if protocol == 'TCP':
-            return QColor('#E7E6FF')
-        elif protocol == 'UDP' or protocol == 'DNS':
-            return QColor('#DAEEFF')
-        elif protocol == 'ICMP':
-            return QColor('#FCE0FF')
-        elif protocol == 'ARP':
-            return QColor('#FAF0D7')
-        else:
-            return QColor('#FFFFFF')
-
     def handle(self, p: Packet):
         self.number += 1
-        data = p.show(dump=True)
-        # print(p['IP'].show(dump=True))
-        # print(p.haslayer('IP'))
-        # print(res)
+        self.current_packet = p
+        raw_data = p.show(dump=True)
         packet_time = str(p.time-self.time)[0:9]
-        src, dst = self.get_src_and_dst(p)
-        protocol = self.get_protocol(p)
-        color = self.get_color(protocol)
+        src, dst = self.get_src_and_dst()
+        protocol = self.get_protocol()
         length = len(p)
-        info = self.get_info(p, protocol)
+        info = self.get_info(protocol)
+        packet_info = PacketInfo(self.number, packet_time, src, dst, protocol, length, info, raw_data)
+        self.packets.append(packet_info)
 
-        signals.update_table.emit([self.number, packet_time, src, dst, protocol, length, info], color)
+        signals.update_table.emit(packet_info)
 
 

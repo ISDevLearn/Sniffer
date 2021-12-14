@@ -55,3 +55,9 @@ icmp_pattern = r'''###\[ ICMP \]###
         id        = (.*)
         seq       = (.*)
         unused    = (.*)'''
+
+raw_pattern = r'''###\[ Raw \]### 
+           load      = (.*)'''
+
+padding_pattern = r'''###\[ Padding \]### 
+           load      = (.*)'''

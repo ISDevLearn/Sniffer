@@ -18,6 +18,16 @@ ip_pattern = r'''###\[ IP \]###
      dst       = (.*)
      \\options   \\'''
 
+ipv6_pattern = r'''###\[ IPv6 \]### 
+     version   = (.*)
+     tc        = (.*)
+     fl        = (.*)
+     plen      = (.*)
+     nh        = (.*)
+     hlim      = (.*)
+     src       = (.*)
+     dst       = (.*)'''
+
 tcp_pattern = r'''###\[ TCP \]### 
         sport     = (.*)
         dport     = (.*)

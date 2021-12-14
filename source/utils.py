@@ -49,6 +49,7 @@ def set_table():
     ui.table.setColumnWidth(4, 100)
     ui.table.setColumnWidth(5, 50)
     ui.table.horizontalHeader().setStretchLastSection(True)
+    ui.table.setStyleSheet('QTableWidget::item:selected{background-color: #ACACAC}')
     ui.table.itemClicked.connect(show_detail)
     ui.table.itemClicked.connect(show_hex)
     # ui.table.itemClicked.connect(change_color)
@@ -104,6 +105,13 @@ def add_row(packet_info: PacketInfo):
     table.scrollToBottom()
 
 
+def clear():
+    ui.table.clearContents()
+    ui.table.setRowCount(0)
+    ui.table.detail_tree.clear()
+    ui.table.hex_text.clear()
+
+
 # 开始嗅探
 def start():
     s.start()
@@ -119,8 +127,7 @@ def start():
 
 # 重新开始
 def restart():
-    ui.table.clearContents()
-    ui.table.setRowCount(0)
+    clear()
     start()
 
 
@@ -143,8 +150,7 @@ def clean_all():
                                  "该操作将会清除所有内容！",
                                  QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
     if reply == QMessageBox.Yes:
-        ui.table.clearContents()
-        ui.table.setRowCount(0)
+        clear()
 
 
 # 展示详细信息
@@ -171,6 +177,7 @@ def show_detail(item: QTableWidgetItem):
 def show_hex(item: QTableWidgetItem):
     row = item.row()
     text: QTextBrowser = ui.hex_text
+    text.clear()
     hex_info = s.packets[row].hex_info
     text.setText(hex_info)
 
@@ -179,5 +186,5 @@ def show_hex(item: QTableWidgetItem):
 def change_color(item: QTableWidgetItem):
     current_color = item.background().color()
     color = hex(current_color.darker(120).rgb())[4:10]
-    ui.table.setStyleSheet('QTableWidget::item:selected{background-color: #' + color + '}')
+    ui.table.setStyleSheet('QTableWidget::item:selected{background-color: ##ACACAC}' + color + '}')
     print(color)

@@ -92,9 +92,12 @@ class PacketInfo:
             if match:
                 self.detail_info['Raw']['load'] = match.group(1)
             else:
-                self.detail_info['Raw'] = ''
+                self.detail_info['Raw']['load'] = ''
         if 'Padding' in layers:
             match = re.search(padding_pattern, self.raw_data)
             self.detail_info['Padding'] = {}
-            self.detail_info['Padding']['load'] = match.group(1)
+            if match:
+                self.detail_info['Padding']['load'] = match.group(1)
+            else:
+                self.detail_info['Padding']['load'] = ''
         # print(self.detail_info)

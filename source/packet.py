@@ -6,7 +6,7 @@ import json
 
 class PacketInfo:
 
-    def __init__(self, number, time, src, dst, protocol, length, info, raw_data):
+    def __init__(self, number, time, src, dst, protocol, length, info, raw_data, hex_info):
 
         self.number = number
         self.time = time
@@ -17,6 +17,7 @@ class PacketInfo:
         self.info = info
         self.detail_info = {}
         self.raw_data = raw_data
+        self.hex_info = hex_info
         self.color = None
 
         self.get_color()
@@ -87,5 +88,3 @@ class PacketInfo:
             self.detail_info['Padding'] = {}
             self.detail_info['Padding']['load'] = match.group(1)
         # print(self.detail_info)
-
-

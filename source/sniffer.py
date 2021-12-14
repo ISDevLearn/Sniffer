@@ -1,3 +1,4 @@
+import scapy.utils
 from scapy.all import *
 from PyQt5.QtWidgets import *
 from packet import PacketInfo
@@ -111,12 +112,14 @@ class Sniffer:
         self.number += 1
         self.current_packet = p
         raw_data = p.show(dump=True)
+        hex_info = scapy.utils.hexdump(p, dump=True)
+        # print(hex_info)
         packet_time = str(p.time-self.time)[0:9]
         src, dst = self.get_src_and_dst()
         protocol = self.get_protocol()
         length = len(p)
         info = self.get_info(protocol)
-        packet_info = PacketInfo(self.number, packet_time, src, dst, protocol, length, info, raw_data)
+        packet_info = PacketInfo(self.number, packet_time, src, dst, protocol, length, info, raw_data, hex_info)
         self.packets.append(packet_info)
 
         signals.update_table.emit(packet_info)

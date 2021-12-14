@@ -50,6 +50,7 @@ def set_table():
     ui.table.setColumnWidth(5, 50)
     ui.table.horizontalHeader().setStretchLastSection(True)
     ui.table.itemClicked.connect(show_detail)
+    ui.table.itemClicked.connect(show_hex)
     # ui.table.itemClicked.connect(change_color)
 
 
@@ -146,6 +147,7 @@ def clean_all():
         ui.table.setRowCount(0)
 
 
+# 展示详细信息
 def show_detail(item: QTableWidgetItem):
     tree: QTreeWidget = ui.detail_tree
     tree.clear()
@@ -163,6 +165,14 @@ def show_detail(item: QTableWidgetItem):
                 node.setText(1, value)
                 root.addChild(node)
     tree.expandAll()
+
+
+# 展示hex信息
+def show_hex(item: QTableWidgetItem):
+    row = item.row()
+    text: QTextBrowser = ui.hex_text
+    hex_info = s.packets[row].hex_info
+    text.setText(hex_info)
 
 
 # 有点寄 先不用了

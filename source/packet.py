@@ -36,7 +36,7 @@ class PacketInfo:
             self.color = QColor('#FFFFFF')
 
     def get_detail(self):
-        # print(self.raw_data)
+        print(self.raw_data)
         pattern = r'###\[ (\w+) \]###'
         layers = re.findall(pattern, self.raw_data)
         self.detail_info = self.detail_info.fromkeys(layers)
@@ -52,6 +52,13 @@ class PacketInfo:
             self.detail_info['IP'] = dict.fromkeys(attributes)
             for i, attr in enumerate(attributes):
                 self.detail_info['IP'][attr] = match.group(i + 1)
+        if 'IPv6' in layers:
+            match = re.search(ipv6_pattern, self.raw_data)
+            attributes = ['vsersion(版本)', 'tc(流量分类)', 'fl(流标签)', 'plen(有效载荷长度)', 'nh(下一个头类型)',
+                          'hlim(最大跳数)', 'src(源地址)', 'dst(目的地址)']
+            self.detail_info['IPv6'] = dict.fromkeys(attributes)
+            for i, attr in enumerate(attributes):
+                self.detail_info['IPv6'][attr] = match.group(i + 1)
         if 'TCP' in layers:
             match = re.search(tcp_pattern, self.raw_data)
             attributes = ['sport(源端口)', 'dport(目的端口)', 'seq(序号)', 'ack(确认号)', 'dataofs(数据偏移)',
@@ -82,7 +89,10 @@ class PacketInfo:
         if 'Raw' in layers:
             match = re.search(raw_pattern, self.raw_data)
             self.detail_info['Raw'] = {}
-            self.detail_info['Raw']['load'] = match.group(1)
+            if match:
+                self.detail_info['Raw']['load'] = match.group(1)
+            else:
+                self.detail_info['Raw'] = ''
         if 'Padding' in layers:
             match = re.search(padding_pattern, self.raw_data)
             self.detail_info['Padding'] = {}

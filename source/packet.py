@@ -78,6 +78,14 @@ class PacketInfo:
             self.detail_info['ICMP'] = dict.fromkeys(attributes)
             for i, attr in enumerate(attributes):
                 self.detail_info['ICMP'][attr] = match.group(i + 1)
+        if 'Raw' in layers:
+            match = re.search(raw_pattern, self.raw_data)
+            self.detail_info['Raw'] = {}
+            self.detail_info['Raw']['load'] = match.group(1)
+        if 'Padding' in layers:
+            match = re.search(padding_pattern, self.raw_data)
+            self.detail_info['Padding'] = {}
+            self.detail_info['Padding']['load'] = match.group(1)
         # print(self.detail_info)
 
 

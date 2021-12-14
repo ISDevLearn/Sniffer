@@ -36,7 +36,7 @@ class PacketInfo:
             self.color = QColor('#FFFFFF')
 
     def get_detail(self):
-        print(self.raw_data)
+        # print(self.raw_data)
         pattern = r'###\[ (\w+) \]###'
         layers = re.findall(pattern, self.raw_data)
         self.detail_info = self.detail_info.fromkeys(layers)

@@ -104,12 +104,12 @@ def add_row(packet_info: PacketInfo):
         table.setItem(rows, i, item)
     table.scrollToBottom()
 
-
+# 清除信息
 def clear():
     ui.table.clearContents()
     ui.table.setRowCount(0)
-    ui.table.detail_tree.clear()
-    ui.table.hex_text.clear()
+    ui.detail_tree.clear()
+    ui.hex_text.clear()
 
 
 # 开始嗅探

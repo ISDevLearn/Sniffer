@@ -7,12 +7,10 @@ import re
 import signal
 
 
-signals = signal.Signals()
-
-
 class Sniffer:
 
     def __init__(self, _ui: QWidget):
+        self.signals = signal.Signals()
         self.ui: QWidget = _ui
         self.nif = ''
         self.number = 0
@@ -26,7 +24,6 @@ class Sniffer:
         self.nif = self.ui.if_box.currentText()
         if self.nif == '网卡':
             return
-        print(self.nif)
         self.is_running = True
         self.current_packet = None
         self.sniffer = AsyncSniffer(iface=self.nif, prn=self.handle)
@@ -36,6 +33,9 @@ class Sniffer:
     def stop(self):
         self.sniffer.stop()
         self.is_running = False
+
+    def clear(self):
+        self.number = 0
 
     def get_protocol(self):
         protocol_list = self.current_packet.summary().split('/')
@@ -113,8 +113,7 @@ class Sniffer:
         self.current_packet = p
         raw_data = p.show(dump=True)
         hex_info = scapy.utils.hexdump(p, dump=True)
-        # print(hex_info)
-        packet_time = str(p.time-self.time)[0:9]
+        packet_time = str(p.time - self.time)[0:9]
         src, dst = self.get_src_and_dst()
         protocol = self.get_protocol()
         length = len(p)
@@ -122,6 +121,4 @@ class Sniffer:
         packet_info = PacketInfo(self.number, packet_time, src, dst, protocol, length, info, raw_data, hex_info)
         self.packets.append(packet_info)
 
-        signals.update_table.emit(packet_info)
-
-
+        self.signals.update_table.emit(packet_info)

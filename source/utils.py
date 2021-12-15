@@ -62,6 +62,7 @@ def set_toolbar():
     ui.action_stop.triggered.connect(stop)
     ui.action_clean_all.triggered.connect(clean_all)
     ui.action_restart.triggered.connect(restart)
+    ui.action_reassemble.triggered.connect(reassemble)
 
 
 def set_if_box():
@@ -103,6 +104,7 @@ def add_row(packet_info: PacketInfo):
         item.setBackground(packet_info.color)
         table.setItem(rows, i, item)
     table.scrollToBottom()
+
 
 # 清除信息
 def clear():
@@ -180,6 +182,11 @@ def show_hex(item: QTableWidgetItem):
     text.clear()
     hex_info = s.packets[row].hex_info
     text.setText(hex_info)
+
+
+# 包重组
+def reassemble():
+    pass
 
 
 # 有点寄 先不用了

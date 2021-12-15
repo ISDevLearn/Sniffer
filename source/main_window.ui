@@ -369,6 +369,103 @@ p, li { white-space: pre-wrap; }
             </item>
            </layout>
           </widget>
+          <widget class="QWidget" name="reassemble_tab">
+           <property name="font">
+            <font>
+             <family>苹方 中等</family>
+            </font>
+           </property>
+           <property name="whatsThis">
+            <string/>
+           </property>
+           <property name="accessibleName">
+            <string>重组</string>
+           </property>
+           <attribute name="title">
+            <string>重组</string>
+           </attribute>
+           <layout class="QVBoxLayout" name="verticalLayout_3">
+            <item>
+             <widget class="QTableWidget" name="reassemble_table">
+              <property name="font">
+               <font>
+                <family>苹方 中等</family>
+               </font>
+              </property>
+              <column>
+               <property name="text">
+                <string>序号</string>
+               </property>
+               <property name="font">
+                <font>
+                 <family>苹方 中等</family>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>时间</string>
+               </property>
+               <property name="font">
+                <font>
+                 <family>苹方 中等</family>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>源</string>
+               </property>
+               <property name="font">
+                <font>
+                 <family>苹方 中等</family>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>目的</string>
+               </property>
+               <property name="font">
+                <font>
+                 <family>苹方 中等</family>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>协议</string>
+               </property>
+               <property name="font">
+                <font>
+                 <family>苹方 中等</family>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>长度</string>
+               </property>
+               <property name="font">
+                <font>
+                 <family>苹方 中等</family>
+                </font>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>信息</string>
+               </property>
+               <property name="font">
+                <font>
+                 <family>苹方 中等</family>
+                </font>
+               </property>
+              </column>
+             </widget>
+            </item>
+           </layout>
+          </widget>
           <widget class="QWidget" name="filter">
            <attribute name="title">
             <string>过滤器</string>
@@ -388,7 +485,7 @@ p, li { white-space: pre-wrap; }
      <x>0</x>
      <y>0</y>
      <width>1105</width>
-     <height>27</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="font">

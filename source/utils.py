@@ -121,6 +121,7 @@ def clear():
     ui.table.setRowCount(0)
     ui.detail_tree.clear()
     ui.hex_text.clear()
+    # 序号清零
     s.clear()
 
 
@@ -196,7 +197,15 @@ def show_hex(item: QTableWidgetItem):
 
 # 包重组
 def reassemble():
-    pass
+    table: QTableWidget = ui.table
+    assemble_rows = table.selectedIndexes()
+    row_set = set(tmp_row.row() for tmp_row in assemble_rows)
+    if row_set:
+        reassemble_packet_list = []
+        for tmp_row in row_set:
+            reassemble_packet_list.append(s.packets[tmp_row].detail_info)
+        s.reassemble_packet(reassemble_packet_list)
+        # print(reassemble_packet_list)
 
 
 def search():

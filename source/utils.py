@@ -1,27 +1,30 @@
 from scapy.all import *
 from PyQt5.QtWidgets import *
 from packet import PacketInfo
+from searcher import Searcher
 import sniffer
+import signal
 
 
-global ui
-global s
 ui: QWidget
 s: sniffer.Sniffer
-signals = sniffer.signals
+signals: signal.Signals
 
 
 def modify(_ui: QWidget):
     global ui
     global s
+    global signals
     ui = _ui
     s = sniffer.Sniffer(ui)
+    signals = s.signals
     set_table()
     get_nif(ui.if_box)  # 获取网卡
     initialize()  # 初始化
     set_toolbar()  # 设置工具栏操作
     set_if_box()
     set_signal()  # 设置信号
+    set_searcher()
 
 
 # 获取网卡
@@ -69,6 +72,12 @@ def set_if_box():
     ui.if_box.currentIndexChanged.connect(check_nif)
 
 
+def set_searcher():
+    search_button = ui.search_button
+    search_button.clicked.connect(search)
+    search_button.setShortcut('Return')
+
+
 # 设置信号
 def set_signal():
     signals.update_table.connect(add_row)
@@ -112,6 +121,7 @@ def clear():
     ui.table.setRowCount(0)
     ui.detail_tree.clear()
     ui.hex_text.clear()
+    s.clear()
 
 
 # 开始嗅探
@@ -189,9 +199,15 @@ def reassemble():
     pass
 
 
-# 有点寄 先不用了
-def change_color(item: QTableWidgetItem):
-    current_color = item.background().color()
-    color = hex(current_color.darker(120).rgb())[4:10]
-    ui.table.setStyleSheet('QTableWidget::item:selected{background-color: ##ACACAC}' + color + '}')
-    print(color)
+def search():
+    search_text: QLineEdit = ui.search_text
+    text = search_text.text()
+    if text == '':
+        for p in s.packets:
+            add_row(p)
+    else:
+        searcher = Searcher(s.packets, text)
+        result = searcher.search()
+        clear()
+        for p in result:
+            add_row(p)

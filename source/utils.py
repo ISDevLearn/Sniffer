@@ -174,8 +174,8 @@ def show_detail(item: QTableWidgetItem):
     tree: QTreeWidget = ui.detail_tree
     tree.clear()
     row = item.row()
-    number = int(ui.table.item(row, 0).text())
-    info = s.packets[number-1].detail_info
+    number = int(ui.table.item(row, 0).text())-1
+    info = s.packets[number].detail_info
     for layer, layer_info in info.items():
         root = QTreeWidgetItem(tree)
         root.setText(0, layer)
@@ -193,9 +193,10 @@ def show_detail(item: QTableWidgetItem):
 # 展示hex信息
 def show_hex(item: QTableWidgetItem):
     row = item.row()
+    number = int(ui.table.item(row, 0).text()) - 1
     text: QTextBrowser = ui.hex_text
     text.clear()
-    hex_info = s.packets[row].hex_info
+    hex_info = s.packets[number].hex_info
     text.setText(hex_info)
 
 

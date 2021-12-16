@@ -204,8 +204,8 @@ def reassemble():
         reassemble_packet_list = []
         for tmp_row in row_set:
             reassemble_packet_list.append(s.packets[tmp_row].detail_info)
-        s.reassemble_packet(reassemble_packet_list)
         # print(reassemble_packet_list)
+        reassemble_packet_dict = s.reassemble_packet(reassemble_packet_list)
 
 
 def search():

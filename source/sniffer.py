@@ -109,6 +109,8 @@ class Sniffer:
         return src, dst
 
     def reassemble_packet(self, packet_list):
+        # id = packet_list[0]['IP']['id(标识)']
+        # for i in range(0, len(packet_list)):
         pass
 
     def handle(self, p: Packet):

@@ -5,7 +5,6 @@ from searcher import Searcher
 import sniffer
 import signal
 
-
 ui: QWidget
 s: sniffer.Sniffer
 signals: signal.Signals
@@ -174,7 +173,7 @@ def show_detail(item: QTableWidgetItem):
     tree: QTreeWidget = ui.detail_tree
     tree.clear()
     row = item.row()
-    number = int(ui.table.item(row, 0).text())-1
+    number = int(ui.table.item(row, 0).text()) - 1
     info = s.packets[number].detail_info
     for layer, layer_info in info.items():
         root = QTreeWidgetItem(tree)
@@ -210,9 +209,44 @@ def reassemble():
         for tmp_row in row_set:
             number = int(ui.table.item(tmp_row, 0).text()) - 1
             reassemble_packet_list.append(s.packets[number].detail_info)
-        # print(reassemble_packet_list)
-        reassemble_packet_dict = s.reassemble_packet(reassemble_packet_list)
 
+        reassemble_packet_dict = reassemble_packet(reassemble_packet_list)
+        print(reassemble_packet_dict)
+        if reassemble_packet_dict:
+            # s.show_reassemble(Time_Start, reassemble_packet_dict)
+            pass
+        else:
+            QMessageBox.question(ui, "警告",
+                                 "请确认你的操作是否正确！",
+                                 QMessageBox.Yes)
+
+
+def reassemble_packet(packet_list):
+    # print(packet_list)
+    id_dict = {}
+    for pkt in packet_list:
+        if pkt['IP']['id(标识)'] not in id_dict.keys():
+            id_dict[str(pkt['IP']['id(标识)'])] = []
+            id_dict[str(pkt['IP']['id(标识)'])].append(pkt)
+        else:
+            id_dict[str(pkt['IP']['id(标识)'])].append(pkt)
+
+    result_dict = {}
+    for id_key in id_dict.keys():
+        tmp_dict = {}
+        for pkt in id_dict[id_key]:
+            tmp_dict[str(pkt['IP']['frag(段偏移)'])] = pkt
+        result_dict[id_key] = tmp_dict['0']
+        contents = ''
+        total_len = -20 * (len(tmp_dict) - 1)
+        for frag in sorted(tmp_dict.keys()):
+            contents += tmp_dict[frag]['Raw']['load']
+            total_len += int(tmp_dict[frag]['IP']['len(总长度)'])
+        result_dict[id_key]['IP']['len(总长度)'] = str(total_len)
+        result_dict[id_key]['Raw']['load'] = contents
+        result_dict[id_key]['IP']['flags(分段标志)'] = 'DF'
+        result_dict[id_key]['IP']['frag(段偏移)'] = 0
+    return result_dict
 
 
 def search():

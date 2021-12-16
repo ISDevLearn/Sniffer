@@ -208,9 +208,11 @@ def reassemble():
     if row_set:
         reassemble_packet_list = []
         for tmp_row in row_set:
-            reassemble_packet_list.append(s.packets[tmp_row].detail_info)
+            number = int(ui.table.item(tmp_row, 0).text()) - 1
+            reassemble_packet_list.append(s.packets[number].detail_info)
         # print(reassemble_packet_list)
         reassemble_packet_dict = s.reassemble_packet(reassemble_packet_list)
+
 
 
 def search():

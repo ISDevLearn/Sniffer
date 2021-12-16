@@ -202,7 +202,17 @@ def show_hex(item: QTableWidgetItem):
 
 # 包重组
 def reassemble():
-    pass
+    table: QTableWidget = ui.table
+    assemble_rows = table.selectedIndexes()
+    row_set = set(tmp_row.row() for tmp_row in assemble_rows)
+    if row_set:
+        reassemble_packet_list = []
+        for tmp_row in row_set:
+            number = int(ui.table.item(tmp_row, 0).text()) - 1
+            reassemble_packet_list.append(s.packets[number].detail_info)
+        # print(reassemble_packet_list)
+        reassemble_packet_dict = s.reassemble_packet(reassemble_packet_list)
+
 
 
 def search():

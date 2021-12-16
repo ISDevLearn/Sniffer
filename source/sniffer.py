@@ -36,6 +36,7 @@ class Sniffer:
 
     def clear(self):
         self.number = 0
+        self.packets.clear()
 
     def get_protocol(self):
         protocol_list = self.current_packet.summary().split('/')

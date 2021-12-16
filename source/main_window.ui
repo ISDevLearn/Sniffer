@@ -84,7 +84,7 @@
           </font>
          </property>
          <property name="placeholderText">
-          <string>过滤条件</string>
+          <string>例：tcp.sport=1234; request in icmp.type; udp</string>
          </property>
         </widget>
        </item>

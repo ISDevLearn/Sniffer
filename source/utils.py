@@ -117,12 +117,15 @@ def add_row(packet_info: PacketInfo):
 
 # 清除信息
 def clear():
+    clear_table()
+    s.clear()
+
+
+def clear_table():
     ui.table.clearContents()
     ui.table.setRowCount(0)
     ui.detail_tree.clear()
     ui.hex_text.clear()
-    # 序号清零
-    s.clear()
 
 
 # 开始嗅探
@@ -171,7 +174,8 @@ def show_detail(item: QTableWidgetItem):
     tree: QTreeWidget = ui.detail_tree
     tree.clear()
     row = item.row()
-    info = s.packets[row].detail_info
+    number = int(ui.table.item(row, 0).text())
+    info = s.packets[number-1].detail_info
     for layer, layer_info in info.items():
         root = QTreeWidgetItem(tree)
         root.setText(0, layer)
@@ -211,12 +215,12 @@ def reassemble():
 def search():
     search_text: QLineEdit = ui.search_text
     text = search_text.text()
+    clear_table()
     if text == '':
         for p in s.packets:
             add_row(p)
     else:
         searcher = Searcher(s.packets, text)
         result = searcher.search()
-        clear()
         for p in result:
             add_row(p)

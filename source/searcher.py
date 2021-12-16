@@ -25,9 +25,18 @@ class Searcher:
             elif match := re.match(r'(.+)in(.+)\.(.+)', search):
                 value = match.group(1)
                 layer = match.group(2)
-                value = match.group(3)
-            elif match := re.match(r'(ethernet)|(ip)|(ipv6)|(tcp)|(udp)|(icmp)', search):
-                layer = match.group(1)
+                key = match.group(3)
+                for packet in self.packet_list:
+                    for p_layer, p_layer_info in packet.detail_info.items():
+                        if layer == p_layer.lower():
+                            for p_key, p_value in p_layer_info.items():
+                                if key in p_key and value in p_value:
+                                    self.result.append(packet)
+            elif match := re.match(r'(.+)', search):
+                protocol = match.group(1)
+                for packet in self.packet_list:
+                    if packet.protocol.lower() == protocol:
+                        self.result.append(packet)
             else:
                 pass
 

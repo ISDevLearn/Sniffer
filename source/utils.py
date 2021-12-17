@@ -2,11 +2,13 @@ from scapy.all import *
 from PyQt5.QtWidgets import *
 from packet import PacketInfo
 from searcher import Searcher
+from reassembler import Reassembler
 import sniffer
 import signal
 
 ui: QWidget
 s: sniffer.Sniffer
+reassembler: Reassembler
 signals: signal.Signals
 
 
@@ -18,6 +20,7 @@ def modify(_ui: QWidget):
     s = sniffer.Sniffer(ui)
     signals = s.signals
     set_table()
+    set_reassemble_table()
     get_nif(ui.if_box)  # 获取网卡
     initialize()  # 初始化
     set_toolbar()  # 设置工具栏操作
@@ -57,6 +60,20 @@ def set_table():
     # ui.table.itemClicked.connect(change_color)
 
 
+# 设置重组信息表格
+def set_reassemble_table():
+    ui.reassemble_table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+    ui.reassemble_table.setColumnWidth(0, 50)
+    ui.reassemble_table.setColumnWidth(1, 50)
+    ui.reassemble_table.setColumnWidth(2, 50)
+    ui.reassemble_table.setColumnWidth(3, 50)
+    ui.reassemble_table.setColumnWidth(4, 50)
+    ui.reassemble_table.horizontalHeader().setStretchLastSection(True)
+    ui.reassemble_table.setStyleSheet('QTableWidget::item:selected{background-color: #ACACAC}')
+    ui.reassemble_table.itemClicked.connect(show_detail)
+    ui.reassemble_table.itemClicked.connect(show_hex)
+
+
 # 设置工具栏操作
 def set_toolbar():
     ui.action_exit.triggered.connect(exit)
@@ -80,6 +97,7 @@ def set_searcher():
 # 设置信号
 def set_signal():
     signals.update_table.connect(add_row)
+    signals.update_reassemble_table.connect(add_reassrow)
 
 
 # 退出界面
@@ -107,6 +125,20 @@ def add_row(packet_info: PacketInfo):
     rows = table.rowCount()
     table.insertRow(rows)
     headers = ['number', 'time', 'src', 'dst', 'protocol', 'length', 'info']
+    for i, header in enumerate(headers):
+        item = QTableWidgetItem(str(packet_info.__dict__[header]))
+        item.setBackground(packet_info.color)
+        table.setItem(rows, i, item)
+    table.scrollToBottom()
+
+
+# 添加重组行
+def add_reassrow(packet_info: PacketInfo):
+    print(1)
+    table: QTableWidget = ui.reassemble_table
+    rows = table.rowCount()
+    table.insertRow(rows)
+    headers = ['number', 'src', 'dst', 'protocol', 'length', 'info']
     for i, header in enumerate(headers):
         item = QTableWidgetItem(str(packet_info.__dict__[header]))
         item.setBackground(packet_info.color)
@@ -208,45 +240,9 @@ def reassemble():
         reassemble_packet_list = []
         for tmp_row in row_set:
             number = int(ui.table.item(tmp_row, 0).text()) - 1
-            reassemble_packet_list.append(s.packets[number].detail_info)
-
-        reassemble_packet_dict = reassemble_packet(reassemble_packet_list)
-        print(reassemble_packet_dict)
-        if reassemble_packet_dict:
-            # s.show_reassemble(Time_Start, reassemble_packet_dict)
-            pass
-        else:
-            QMessageBox.question(ui, "警告",
-                                 "请确认你的操作是否正确！",
-                                 QMessageBox.Yes)
-
-
-def reassemble_packet(packet_list):
-    # print(packet_list)
-    id_dict = {}
-    for pkt in packet_list:
-        if pkt['IP']['id(标识)'] not in id_dict.keys():
-            id_dict[str(pkt['IP']['id(标识)'])] = []
-            id_dict[str(pkt['IP']['id(标识)'])].append(pkt)
-        else:
-            id_dict[str(pkt['IP']['id(标识)'])].append(pkt)
-
-    result_dict = {}
-    for id_key in id_dict.keys():
-        tmp_dict = {}
-        for pkt in id_dict[id_key]:
-            tmp_dict[str(pkt['IP']['frag(段偏移)'])] = pkt
-        result_dict[id_key] = tmp_dict['0']
-        contents = ''
-        total_len = -20 * (len(tmp_dict) - 1)
-        for frag in sorted(tmp_dict.keys()):
-            contents += tmp_dict[frag]['Raw']['load']
-            total_len += int(tmp_dict[frag]['IP']['len(总长度)'])
-        result_dict[id_key]['IP']['len(总长度)'] = str(total_len)
-        result_dict[id_key]['Raw']['load'] = contents
-        result_dict[id_key]['IP']['flags(分段标志)'] = 'DF'
-        result_dict[id_key]['IP']['frag(段偏移)'] = 0
-    return result_dict
+            reassemble_packet_list.append(s.packets[number])
+        reassembler = Reassembler(reassemble_packet_list)
+        reassembler.reassemble_packet()
 
 
 def search():

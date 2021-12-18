@@ -13,6 +13,7 @@ class Sniffer:
         self.signals = signal.Signals()
         self.ui: QWidget = _ui
         self.nif = ''
+        self.filter = ''
         self.number = 0
         self.time = 0
         self.sniffer = None
@@ -26,7 +27,7 @@ class Sniffer:
             return
         self.is_running = True
         self.current_packet = None
-        self.sniffer = AsyncSniffer(iface=self.nif, prn=self.handle)
+        self.sniffer = AsyncSniffer(iface=self.nif, prn=self.handle, filter=self.filter)
         self.time = time.time()
         self.sniffer.start()
 
@@ -37,6 +38,9 @@ class Sniffer:
     def clear(self):
         self.number = 0
         self.packets.clear()
+
+    def set_filter(self, filter_str):
+        self.filter = filter_str
 
     def get_protocol(self):
         protocol_list = self.current_packet.summary().split('/')
@@ -119,7 +123,8 @@ class Sniffer:
         protocol = self.get_protocol()
         length = len(p)
         info = self.get_info(protocol)
-        packet_info = PacketInfo(self.number, packet_time, src, dst, protocol, length, info, raw_data, hex_info)
+        packet_info = PacketInfo()
+        packet_info.from_args(self.number, packet_time, src, dst, protocol, length, info, raw_data, hex_info)
         self.packets.append(packet_info)
 
         self.signals.update_table.emit(packet_info)

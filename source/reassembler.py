@@ -14,10 +14,9 @@ class Reassembler:
         # self.reassemble_packet()
 
     def reassemble_packet(self, packet_list):
-        # print(packet_list)
         self.packet_list = packet_list
-        self.result_dict.clear()
-        self.result_list.clear()
+        # self.result_dict.clear()
+        # self.result_list.clear()
 
         id_dict = {}
         for pkt in self.packet_list:
@@ -62,9 +61,7 @@ class Reassembler:
             self.number += 1
             self.signals.update_reassemble_table.emit(packet_info)
 
-            self.result_dict.clear()
-            self.result_list.clear()
-
         if self.result_dict:
             for v in self.result_dict.values():
                 self.result_list.append(v)
+            # print(self.result_list)

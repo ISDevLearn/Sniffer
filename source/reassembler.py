@@ -59,14 +59,12 @@ class Reassembler:
 
             # print(src, dst, protocol, length, info, raw_data, hex_info)
             packet_info = PacketInfo(self.number, 0, src, dst, protocol, length, info, raw_data, hex_info)
+            self.number += 1
             self.signals.update_reassemble_table.emit(packet_info)
 
+            self.result_dict.clear()
+            self.result_list.clear()
+
         if self.result_dict:
-            print(self.result_dict)
             for v in self.result_dict.values():
                 self.result_list.append(v)
-            print(self.result_list)
-
-
-
-

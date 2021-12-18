@@ -1,27 +1,36 @@
 from scapy.all import *
 from PyQt5.QtWidgets import *
 from packet import PacketInfo
+from searcher import Searcher
+from reassembler import Reassembler
 import sniffer
+import signal
 
-
-global ui
-global s
 ui: QWidget
 s: sniffer.Sniffer
-signals = sniffer.signals
+reassembler: Reassembler
+
+
+# signals: signal.Signals
 
 
 def modify(_ui: QWidget):
     global ui
     global s
+    # global signals
+    global reassembler
     ui = _ui
     s = sniffer.Sniffer(ui)
+    reassembler = Reassembler()
+    # signals = s.signals
     set_table()
+    set_reassemble_table()
     get_nif(ui.if_box)  # 获取网卡
     initialize()  # 初始化
     set_toolbar()  # 设置工具栏操作
     set_if_box()
     set_signal()  # 设置信号
+    set_searcher()
 
 
 # 获取网卡
@@ -55,6 +64,20 @@ def set_table():
     # ui.table.itemClicked.connect(change_color)
 
 
+# 设置重组信息表格
+def set_reassemble_table():
+    ui.reassemble_table.horizontalHeader().setSectionResizeMode(QHeaderView.Interactive)
+    ui.reassemble_table.setColumnWidth(0, 50)
+    ui.reassemble_table.setColumnWidth(1, 50)
+    ui.reassemble_table.setColumnWidth(2, 50)
+    ui.reassemble_table.setColumnWidth(3, 50)
+    ui.reassemble_table.setColumnWidth(4, 50)
+    ui.reassemble_table.horizontalHeader().setStretchLastSection(True)
+    ui.reassemble_table.setStyleSheet('QTableWidget::item:selected{background-color: #ACACAC}')
+    # ui.reassemble_table.itemClicked.connect(show_detail)
+    # ui.reassemble_table.itemClicked.connect(show_hex)
+
+
 # 设置工具栏操作
 def set_toolbar():
     ui.action_exit.triggered.connect(exit)
@@ -62,15 +85,23 @@ def set_toolbar():
     ui.action_stop.triggered.connect(stop)
     ui.action_clean_all.triggered.connect(clean_all)
     ui.action_restart.triggered.connect(restart)
+    ui.action_reassemble.triggered.connect(reassemble)
 
 
 def set_if_box():
     ui.if_box.currentIndexChanged.connect(check_nif)
 
 
+def set_searcher():
+    search_button = ui.search_button
+    search_button.clicked.connect(search)
+    search_button.setShortcut('Return')
+
+
 # 设置信号
 def set_signal():
-    signals.update_table.connect(add_row)
+    s.signals.update_table.connect(add_row)
+    reassembler.signals.update_reassemble_table.connect(add_reassrow)
 
 
 # 退出界面
@@ -104,12 +135,33 @@ def add_row(packet_info: PacketInfo):
         table.setItem(rows, i, item)
     table.scrollToBottom()
 
+
+# 添加重组行
+def add_reassrow(packet_info: PacketInfo):
+    table: QTableWidget = ui.reassemble_table
+    rows = table.rowCount()
+    table.insertRow(rows)
+    headers = ['number', 'src', 'dst', 'protocol', 'length', 'info']
+    for i, header in enumerate(headers):
+        item = QTableWidgetItem(str(packet_info.__dict__[header]))
+        item.setBackground(packet_info.color)
+        table.setItem(rows, i, item)
+    table.scrollToBottom()
+
+
 # 清除信息
 def clear():
+    clear_table()
+    s.clear()
+
+
+def clear_table():
     ui.table.clearContents()
     ui.table.setRowCount(0)
     ui.detail_tree.clear()
     ui.hex_text.clear()
+    ui.reassemble_table.clearContents()
+    ui.reassemble_table.setRowCount(0)
 
 
 # 开始嗅探
@@ -158,7 +210,8 @@ def show_detail(item: QTableWidgetItem):
     tree: QTreeWidget = ui.detail_tree
     tree.clear()
     row = item.row()
-    info = s.packets[row].detail_info
+    number = int(ui.table.item(row, 0).text()) - 1
+    info = s.packets[number].detail_info
     for layer, layer_info in info.items():
         root = QTreeWidgetItem(tree)
         root.setText(0, layer)
@@ -167,8 +220,12 @@ def show_detail(item: QTableWidgetItem):
                 if value is None:
                     value = ''
                 node = QTreeWidgetItem(root)
+                # print(key, type(key))
+                # print(value, type(value))
+
                 node.setText(0, key)
                 node.setText(1, value)
+
                 root.addChild(node)
     tree.expandAll()
 
@@ -176,15 +233,43 @@ def show_detail(item: QTableWidgetItem):
 # 展示hex信息
 def show_hex(item: QTableWidgetItem):
     row = item.row()
+    number = int(ui.table.item(row, 0).text()) - 1
     text: QTextBrowser = ui.hex_text
     text.clear()
-    hex_info = s.packets[row].hex_info
+    hex_info = s.packets[number].hex_info
     text.setText(hex_info)
 
 
-# 有点寄 先不用了
-def change_color(item: QTableWidgetItem):
-    current_color = item.background().color()
-    color = hex(current_color.darker(120).rgb())[4:10]
-    ui.table.setStyleSheet('QTableWidget::item:selected{background-color: ##ACACAC}' + color + '}')
-    print(color)
+# 包重组
+def reassemble():
+    table: QTableWidget = ui.table
+    tab: QTabWidget = ui.tab
+    assemble_rows = table.selectedIndexes()
+    row_set = set(tmp_row.row() for tmp_row in assemble_rows)
+    if row_set:
+        reassemble_packet_list = []
+        for tmp_row in row_set:
+            number = int(ui.table.item(tmp_row, 0).text()) - 1
+            reassemble_packet_list.append(s.packets[number])
+        try:
+            reassembler.reassemble_packet(reassemble_packet_list)
+        except:
+            QMessageBox.warning(ui, "警告", "这些包无法进行重组...", QMessageBox.Yes)
+    else:
+        QMessageBox.warning(ui, "警告", "您尚未选择任何包。",
+                            QMessageBox.Yes)
+    tab.setCurrentIndex(2)
+
+
+def search():
+    search_text: QLineEdit = ui.search_text
+    text = search_text.text()
+    clear_table()
+    if text == '':
+        for p in s.packets:
+            add_row(p)
+    else:
+        searcher = Searcher(s.packets, text)
+        result = searcher.search()
+        for p in result:
+            add_row(p)

@@ -208,6 +208,7 @@ def clean_all():
 # 展示详细信息
 def show_detail(item: QTableWidgetItem):
     tree: QTreeWidget = ui.detail_tree
+    tab: QTabWidget = ui.tab
     tree.clear()
     row = item.row()
     number = int(ui.table.item(row, 0).text()) - 1
@@ -228,6 +229,7 @@ def show_detail(item: QTableWidgetItem):
 
                 root.addChild(node)
     tree.expandAll()
+    tab.setCurrentIndex(0)
 
 
 # 展示hex信息

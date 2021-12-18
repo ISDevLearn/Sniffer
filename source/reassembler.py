@@ -13,7 +13,6 @@ class Reassembler:
         # self.reassemble_packet()
 
     def reassemble_packet(self):
-        # print(packet_list)
         id_dict = {}
         for pkt in self.packet_list:
             detail_dict = pkt.detail_info
@@ -39,22 +38,25 @@ class Reassembler:
             self.result_dict[id_key]['IP']['len(总长度)'] = str(total_len)
             self.result_dict[id_key]['Raw']['load'] = contents
             self.result_dict[id_key]['IP']['flags(分段标志)'] = 'DF'
-            self.result_dict[id_key]['IP']['frag(段偏移)'] = 0
+            self.result_dict[id_key]['IP']['frag(段偏移)'] = str(0)
 
+            hex_info = ''
             for pkt in self.packet_list:
                 src = pkt.src
                 dst = pkt.dst
-                protocol = pkt.protocol
-                info = pkt.info
                 raw_data = pkt.raw_data
-                hex_info = pkt.hex_info
+                hex_info += pkt.hex_info
+
             length = total_len + 14
+            protocol = self.packet_list[0].protocol
+            info = self.packet_list[0].info
 
             # print(src, dst, protocol, length, info, raw_data, hex_info)
             packet_info = PacketInfo(self.number, 0, src, dst, protocol, length, info, raw_data, hex_info)
             self.signals.update_reassemble_table.emit(packet_info)
 
         if self.result_dict:
+            print(self.result_dict)
             for v in self.result_dict.values():
                 self.result_list.append(v)
             print(self.result_list)

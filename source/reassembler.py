@@ -1,10 +1,11 @@
-from packet import PacketInfo
+import copy
 import signal
+from packet import PacketInfo
 
 
 class Reassembler:
-    def __init__(self, packet_list):
-        self.packet_list = packet_list
+    def __init__(self):
+        self.packet_list = []
         self.signals = signal.Signals()
         self.number = 0
         self.result_dict = {}
@@ -12,11 +13,14 @@ class Reassembler:
 
         # self.reassemble_packet()
 
-    def reassemble_packet(self):
+    def reassemble_packet(self, packet_list):
         # print(packet_list)
+        self.packet_list = packet_list
+        self.result_dict.clear()
+        self.result_list.clear()
         id_dict = {}
         for pkt in self.packet_list:
-            detail_dict = pkt.detail_info
+            detail_dict = copy.deepcopy(pkt.detail_info)
             if detail_dict['IP']['id(标识)'] not in id_dict.keys():
                 id_dict[str(detail_dict['IP']['id(标识)'])] = []
                 id_dict[str(detail_dict['IP']['id(标识)'])].append(detail_dict)

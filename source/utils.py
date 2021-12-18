@@ -9,16 +9,18 @@ import signal
 ui: QWidget
 s: sniffer.Sniffer
 reassembler: Reassembler
-signals: signal.Signals
+# signals: signal.Signals
 
 
 def modify(_ui: QWidget):
     global ui
     global s
-    global signals
+    # global signals
+    global reassembler
     ui = _ui
     s = sniffer.Sniffer(ui)
-    signals = s.signals
+    reassembler = Reassembler()
+    # signals = s.signals
     set_table()
     set_reassemble_table()
     get_nif(ui.if_box)  # 获取网卡
@@ -70,8 +72,8 @@ def set_reassemble_table():
     ui.reassemble_table.setColumnWidth(4, 50)
     ui.reassemble_table.horizontalHeader().setStretchLastSection(True)
     ui.reassemble_table.setStyleSheet('QTableWidget::item:selected{background-color: #ACACAC}')
-    ui.reassemble_table.itemClicked.connect(show_detail)
-    ui.reassemble_table.itemClicked.connect(show_hex)
+    # ui.reassemble_table.itemClicked.connect(show_detail)
+    # ui.reassemble_table.itemClicked.connect(show_hex)
 
 
 # 设置工具栏操作
@@ -96,8 +98,8 @@ def set_searcher():
 
 # 设置信号
 def set_signal():
-    signals.update_table.connect(add_row)
-    signals.update_reassemble_table.connect(add_reassrow)
+    s.signals.update_table.connect(add_row)
+    reassembler.signals.update_reassemble_table.connect(add_reassrow)
 
 
 # 退出界面
@@ -134,7 +136,6 @@ def add_row(packet_info: PacketInfo):
 
 # 添加重组行
 def add_reassrow(packet_info: PacketInfo):
-    print(1)
     table: QTableWidget = ui.reassemble_table
     rows = table.rowCount()
     table.insertRow(rows)
@@ -215,8 +216,12 @@ def show_detail(item: QTableWidgetItem):
                 if value is None:
                     value = ''
                 node = QTreeWidgetItem(root)
+                print(key, type(key))
+                print(value, type(value))
+
                 node.setText(0, key)
                 node.setText(1, value)
+
                 root.addChild(node)
     tree.expandAll()
 
@@ -234,6 +239,7 @@ def show_hex(item: QTableWidgetItem):
 # 包重组
 def reassemble():
     table: QTableWidget = ui.table
+    tab: QTabWidget = ui.tab
     assemble_rows = table.selectedIndexes()
     row_set = set(tmp_row.row() for tmp_row in assemble_rows)
     if row_set:
@@ -241,8 +247,10 @@ def reassemble():
         for tmp_row in row_set:
             number = int(ui.table.item(tmp_row, 0).text()) - 1
             reassemble_packet_list.append(s.packets[number])
-        reassembler = Reassembler(reassemble_packet_list)
-        reassembler.reassemble_packet()
+
+            reassembler.reassemble_packet(reassemble_packet_list)
+
+    tab.setCurrentIndex(2)
 
 
 def search():

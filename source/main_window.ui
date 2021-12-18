@@ -404,16 +404,6 @@ p, li { white-space: pre-wrap; }
               </column>
               <column>
                <property name="text">
-                <string>时间</string>
-               </property>
-               <property name="font">
-                <font>
-                 <family>苹方 中等</family>
-                </font>
-               </property>
-              </column>
-              <column>
-               <property name="text">
                 <string>源</string>
                </property>
                <property name="font">

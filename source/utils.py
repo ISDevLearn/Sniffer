@@ -9,6 +9,8 @@ import signal
 ui: QWidget
 s: sniffer.Sniffer
 reassembler: Reassembler
+
+
 # signals: signal.Signals
 
 
@@ -158,6 +160,8 @@ def clear_table():
     ui.table.setRowCount(0)
     ui.detail_tree.clear()
     ui.hex_text.clear()
+    ui.reassemble_table.clearContents()
+    ui.reassemble_table.setRowCount(0)
 
 
 # 开始嗅探
@@ -216,8 +220,8 @@ def show_detail(item: QTableWidgetItem):
                 if value is None:
                     value = ''
                 node = QTreeWidgetItem(root)
-                print(key, type(key))
-                print(value, type(value))
+                # print(key, type(key))
+                # print(value, type(value))
 
                 node.setText(0, key)
                 node.setText(1, value)
@@ -247,9 +251,13 @@ def reassemble():
         for tmp_row in row_set:
             number = int(ui.table.item(tmp_row, 0).text()) - 1
             reassemble_packet_list.append(s.packets[number])
-
+        try:
             reassembler.reassemble_packet(reassemble_packet_list)
-
+        except:
+            QMessageBox.warning(ui, "警告", "这些包无法进行重组...", QMessageBox.Yes)
+    else:
+        QMessageBox.warning(ui, "警告", "您尚未选择任何包。",
+                            QMessageBox.Yes)
     tab.setCurrentIndex(2)
 
 

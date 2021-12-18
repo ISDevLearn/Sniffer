@@ -74,7 +74,7 @@ def set_reassemble_table():
     ui.reassemble_table.setColumnWidth(4, 50)
     ui.reassemble_table.horizontalHeader().setStretchLastSection(True)
     ui.reassemble_table.setStyleSheet('QTableWidget::item:selected{background-color: #ACACAC}')
-    # ui.reassemble_table.itemClicked.connect(show_detail)
+    ui.reassemble_table.itemClicked.connect(show_reass_detail)
     # ui.reassemble_table.itemClicked.connect(show_hex)
 
 
@@ -213,6 +213,32 @@ def show_detail(item: QTableWidgetItem):
     row = item.row()
     number = int(ui.table.item(row, 0).text()) - 1
     info = s.packets[number].detail_info
+    for layer, layer_info in info.items():
+        root = QTreeWidgetItem(tree)
+        root.setText(0, layer)
+        if layer_info:
+            for key, value in layer_info.items():
+                if value is None:
+                    value = ''
+                node = QTreeWidgetItem(root)
+                # print(key, type(key))
+                # print(value, type(value))
+
+                node.setText(0, key)
+                node.setText(1, value)
+
+                root.addChild(node)
+    tree.expandAll()
+    tab.setCurrentIndex(0)
+
+
+def show_reass_detail(item: QTableWidgetItem):
+    tree: QTreeWidget = ui.detail_tree
+    tab: QTabWidget = ui.tab
+    tree.clear()
+    row = item.row()
+    number = int(ui.reassemble_table.item(row, 0).text()) - 1
+    info = reassembler.result_list[number]
     for layer, layer_info in info.items():
         root = QTreeWidgetItem(tree)
         root.setText(0, layer)

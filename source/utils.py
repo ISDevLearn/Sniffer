@@ -327,11 +327,18 @@ def save():
             save_list.append(s.packets[number].to_dict())
         for i, save_dict in enumerate(sorted(save_list, key=lambda x: x['time'])):
             save_dict['number'] = i + 1
-        filename = './save/' + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + '.json'
-        with open(filename, 'w') as f:
-            f.write(json.dumps(save_list))
-            f.close()
-        QMessageBox.information(ui, '提示', '保存成功', QMessageBox.Yes)
+        # filename = './save/' + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + '.json'
+        filepath, _ = QFileDialog.getSaveFileName(
+            ui,  # 父窗口对象
+            "保存文件",  # 标题
+            "./save/",  # 起始目录
+            "json类型 (*.json);;All Files (*)"  # 选择类型过滤项，过滤内容在括号中
+        )
+        if filepath:
+            with open(filepath, 'w') as f:
+                f.write(json.dumps(save_list))
+                f.close()
+            QMessageBox.information(ui, '提示', '保存成功', QMessageBox.Yes)
     else:
         QMessageBox.warning(ui, "警告", "至少选择一个包。", QMessageBox.Yes)
 

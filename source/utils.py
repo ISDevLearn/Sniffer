@@ -4,20 +4,19 @@ from packet import PacketInfo
 from searcher import Searcher
 from reassembler import Reassembler
 import sniffer
-import signal
+import filter
+import json
+import time
+
 
 ui: QWidget
 s: sniffer.Sniffer
 reassembler: Reassembler
 
 
-# signals: signal.Signals
-
-
 def modify(_ui: QWidget):
     global ui
     global s
-    # global signals
     global reassembler
     ui = _ui
     s = sniffer.Sniffer(ui)
@@ -74,7 +73,7 @@ def set_reassemble_table():
     ui.reassemble_table.setColumnWidth(4, 50)
     ui.reassemble_table.horizontalHeader().setStretchLastSection(True)
     ui.reassemble_table.setStyleSheet('QTableWidget::item:selected{background-color: #ACACAC}')
-    # ui.reassemble_table.itemClicked.connect(show_detail)
+    ui.reassemble_table.itemClicked.connect(show_reass_detail)
     # ui.reassemble_table.itemClicked.connect(show_hex)
 
 
@@ -86,6 +85,10 @@ def set_toolbar():
     ui.action_clean_all.triggered.connect(clean_all)
     ui.action_restart.triggered.connect(restart)
     ui.action_reassemble.triggered.connect(reassemble)
+    ui.action_save_as.triggered.connect(save)
+    ui.action_open_file.triggered.connect(load)
+    ui.action_show_details.triggered.connect(lambda: ui.tab.setCurrentIndex(0))
+    ui.action_filter.triggered.connect(lambda: ui.tab.setCurrentIndex(3))
 
 
 def set_if_box():
@@ -166,6 +169,8 @@ def clear_table():
 
 # 开始嗅探
 def start():
+    f = get_filter()
+    s.set_filter(f.translate())
     s.start()
     ui.action_stop.setEnabled(True)
     ui.action_start.setEnabled(False)
@@ -203,6 +208,7 @@ def clean_all():
                                  QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
     if reply == QMessageBox.Yes:
         clear()
+        ui.action_save_as.setEnabled(False)
 
 
 # 展示详细信息
@@ -221,9 +227,28 @@ def show_detail(item: QTableWidgetItem):
                 if value is None:
                     value = ''
                 node = QTreeWidgetItem(root)
-                # print(key, type(key))
-                # print(value, type(value))
+                node.setText(0, key)
+                node.setText(1, value)
+                root.addChild(node)
+    tree.expandAll()
+    tab.setCurrentIndex(0)
 
+
+def show_reass_detail(item: QTableWidgetItem):
+    tree: QTreeWidget = ui.detail_tree
+    tab: QTabWidget = ui.tab
+    tree.clear()
+    row = item.row()
+    number = int(ui.reassemble_table.item(row, 0).text()) - 1
+    info = reassembler.result_list[number]
+    for layer, layer_info in info.items():
+        root = QTreeWidgetItem(tree)
+        root.setText(0, layer)
+        if layer_info:
+            for key, value in layer_info.items():
+                if value is None:
+                    value = ''
+                node = QTreeWidgetItem(root)
                 node.setText(0, key)
                 node.setText(1, value)
 
@@ -248,18 +273,20 @@ def reassemble():
     tab: QTabWidget = ui.tab
     assemble_rows = table.selectedIndexes()
     row_set = set(tmp_row.row() for tmp_row in assemble_rows)
-    if row_set:
+    if len(row_set) >= 2:
         reassemble_packet_list = []
         for tmp_row in row_set:
             number = int(ui.table.item(tmp_row, 0).text()) - 1
             reassemble_packet_list.append(s.packets[number])
         try:
-            reassembler.reassemble_packet(reassemble_packet_list)
+            ui.reassemble_table.clearContents()
+            ui.reassemble_table.setRowCount(0)
+            result = reassembler.reassemble_packet(reassemble_packet_list)
+            assert result == 1
         except:
             QMessageBox.warning(ui, "警告", "这些包无法进行重组...", QMessageBox.Yes)
     else:
-        QMessageBox.warning(ui, "警告", "您尚未选择任何包。",
-                            QMessageBox.Yes)
+        QMessageBox.warning(ui, "警告", "需要选择两个以上的包。", QMessageBox.Yes)
     tab.setCurrentIndex(2)
 
 
@@ -275,3 +302,64 @@ def search():
         result = searcher.search()
         for p in result:
             add_row(p)
+
+
+def get_filter():
+    src = ui.filter_src.text()
+    dst = ui.filter_dst.text()
+    sport = ui.filter_sport.text()
+    dport = ui.filter_dport.text()
+    protocol = ui.filter_protocol.text()
+    if ui.radio_and.isChecked():
+        connector = ' and '
+    else:
+        connector = ' or '
+    return filter.Filter(src, dst, sport, dport, protocol, connector)
+
+
+def save():
+    save_list = []
+    assemble_rows = ui.table.selectedIndexes()
+    rows = set(tmp_row.row() for tmp_row in assemble_rows)
+    if len(rows) > 0:
+        for row in rows:
+            number = int(ui.table.item(row, 0).text()) - 1
+            save_list.append(s.packets[number].to_dict())
+        for i, save_dict in enumerate(sorted(save_list, key=lambda x: x['time'])):
+            save_dict['number'] = i + 1
+        # filename = './save/' + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + '.json'
+        filepath, _ = QFileDialog.getSaveFileName(
+            ui,  # 父窗口对象
+            "保存文件",  # 标题
+            "./save/",  # 起始目录
+            "json类型 (*.json);;All Files (*)"  # 选择类型过滤项，过滤内容在括号中
+        )
+        if filepath:
+            with open(filepath, 'w') as f:
+                f.write(json.dumps(save_list))
+                f.close()
+            QMessageBox.information(ui, '提示', '保存成功', QMessageBox.Yes)
+    else:
+        QMessageBox.warning(ui, "警告", "至少选择一个包。", QMessageBox.Yes)
+
+
+def load():
+    file, _ = QFileDialog.getOpenFileName(ui, "选择已保存的文件", '', '(*.json)')
+    if file:
+        try:
+            clear()
+            packet_list = []
+            with open(file, 'r') as f:
+                save_list = json.loads(f.read())
+                for packet_dict in save_list:
+                    p = PacketInfo()
+                    p.from_dict(packet_dict)
+                    packet_list.append(p)
+                s.packets = packet_list
+                f.close()
+            for p in s.packets:
+                add_row(p)
+            QMessageBox.information(ui, '提示', '读取成功', QMessageBox.Yes)
+        except Exception:
+            QMessageBox.warning(ui, "警告", "读取出现异常", QMessageBox.Yes)
+

@@ -6,8 +6,21 @@ import json
 
 class PacketInfo:
 
-    def __init__(self, number, time, src, dst, protocol, length, info, raw_data, hex_info):
+    def __init__(self):
 
+        self.number = None
+        self.time = None
+        self.protocol = None
+        self.src = None
+        self.dst = None
+        self.length = None
+        self.info = None
+        self.detail_info = {}
+        self.raw_data = None
+        self.hex_info = None
+        self.color = None
+
+    def from_args(self, number, time, src, dst, protocol, length, info, raw_data, hex_info):
         self.number = number
         self.time = time
         self.protocol = protocol
@@ -18,10 +31,14 @@ class PacketInfo:
         self.detail_info = {}
         self.raw_data = raw_data
         self.hex_info = hex_info
-        self.color = None
 
         self.get_color()
         self.get_detail()
+
+    def from_dict(self, packet_dict: dict):
+        for key, value in packet_dict.items():
+            self.__dict__[key] = value
+        self.get_color()
 
     def get_color(self):
         if self.protocol == 'TCP':
@@ -101,3 +118,7 @@ class PacketInfo:
             else:
                 self.detail_info['Padding']['load'] = ''
         # print(self.detail_info)
+
+    def to_dict(self):
+        return {'number': self.number, 'time': self.time, 'src': self.src, 'dst': self.dst,
+                'protocol': self.protocol, 'length': self.length, 'info': self.info, 'detail_info': self.detail_info, 'hex_info': self.hex_info}

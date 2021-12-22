@@ -18,9 +18,10 @@ class PacketInfo:
         self.detail_info = {}
         self.raw_data = None
         self.hex_info = None
+        self.payload = None
         self.color = None
 
-    def from_args(self, number, time, src, dst, protocol, length, info, raw_data, hex_info):
+    def from_args(self, number, time, src, dst, protocol, length, info, raw_data, hex_info, payload):
         self.number = number
         self.time = time
         self.protocol = protocol
@@ -31,6 +32,7 @@ class PacketInfo:
         self.detail_info = {}
         self.raw_data = raw_data
         self.hex_info = hex_info
+        self.payload = payload
 
         self.get_color()
         self.get_detail()
@@ -121,4 +123,4 @@ class PacketInfo:
 
     def to_dict(self):
         return {'number': self.number, 'time': self.time, 'src': self.src, 'dst': self.dst,
-                'protocol': self.protocol, 'length': self.length, 'info': self.info, 'detail_info': self.detail_info, 'hex_info': self.hex_info}
+                'protocol': self.protocol, 'length': self.length, 'info': self.info, 'detail_info': self.detail_info, 'hex_info': self.hex_info, 'payload': self.payload}

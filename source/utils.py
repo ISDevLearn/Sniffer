@@ -7,6 +7,7 @@ import sniffer
 import filter
 import json
 import time
+import ast
 
 
 ui: QWidget
@@ -89,6 +90,7 @@ def set_toolbar():
     ui.action_open_file.triggered.connect(load)
     ui.action_show_details.triggered.connect(lambda: ui.tab.setCurrentIndex(0))
     ui.action_filter.triggered.connect(lambda: ui.tab.setCurrentIndex(3))
+    ui.action_tcp_to_file.triggered.connect(file_reassemble)
 
 
 def set_if_box():
@@ -318,6 +320,7 @@ def get_filter():
 
 
 def save():
+ try:
     save_list = []
     assemble_rows = ui.table.selectedIndexes()
     rows = set(tmp_row.row() for tmp_row in assemble_rows)
@@ -341,6 +344,8 @@ def save():
             QMessageBox.information(ui, '提示', '保存成功', QMessageBox.Yes)
     else:
         QMessageBox.warning(ui, "警告", "至少选择一个包。", QMessageBox.Yes)
+ except Exception as e:
+     print(e)
 
 
 def load():
@@ -363,3 +368,22 @@ def load():
         except Exception:
             QMessageBox.warning(ui, "警告", "读取出现异常", QMessageBox.Yes)
 
+
+def file_reassemble():
+    table: QTableWidget = ui.table
+    assemble_rows = table.selectedIndexes()
+    row_set = set(tmp_row.row() for tmp_row in assemble_rows)
+    if len(row_set) >= 1:
+        reassemble_packet_list = []
+        for tmp_row in row_set:
+            number = int(ui.table.item(tmp_row, 0).text()) - 1
+            if s.packets[number].payload:
+                reassemble_packet_list.append(s.packets[number])
+        reassemble_packet_list = sorted(reassemble_packet_list, key=lambda x: x.time)
+        raw_data = b""
+        for p in reassemble_packet_list:
+            raw_data += ast.literal_eval(p.payload)
+        if b'\xff\xd8\xff\xe0\x00\x10JFIF' in raw_data:
+            file = raw_data[raw_data.index(b'\xff\xd8\xff\xe0\x00\x10JFIF'):raw_data.index(b'\xff\xd9')+2]
+            with open('./testfile/image.jpg', 'wb') as f:
+                f.write(file)

@@ -383,7 +383,24 @@ def file_reassemble():
         raw_data = b""
         for p in reassemble_packet_list:
             raw_data += ast.literal_eval(p.payload)
-        if b'\xff\xd8\xff\xe0\x00\x10JFIF' in raw_data:
-            file = raw_data[raw_data.index(b'\xff\xd8\xff\xe0\x00\x10JFIF'):raw_data.index(b'\xff\xd9')+2]
-            with open('./testfile/image.jpg', 'wb') as f:
-                f.write(file)
+        try:
+            if b'\xff\xd8\xff\xe0\x00\x10JFIF' in raw_data:
+                head = b'\xff\xd8\xff\xe0\x00\x10JFIF'
+                end = b'\xff\xd9'
+                file = raw_data[raw_data.index(head):raw_data.index(end) + 2]
+                with open('./testfile/image.jpg', 'wb') as f:
+                    f.write(file)
+                QMessageBox.information(ui, '提示', '重组成功', QMessageBox.Yes)
+            elif b'\x89PNG' in raw_data:
+                head = b'\x89PNG'
+                end = b'\x00\x00\x00\x00IEND\xaeB\x60\x82'
+                file = raw_data[raw_data.index(head):raw_data.index(end) + len(end)]
+                with open('./testfile/image.png', 'wb') as f:
+                    f.write(file)
+                QMessageBox.information(ui, '提示', '重组成功', QMessageBox.Yes)
+            else:
+                QMessageBox.warning(ui, '提示', '尝试重组失败', QMessageBox.Yes)
+        except:
+            QMessageBox.warning(ui, '提示', '尝试重组失败', QMessageBox.Yes)
+    else:
+        QMessageBox.warning(ui, '提示', '没有选择数据包', QMessageBox.Yes)

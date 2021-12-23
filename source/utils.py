@@ -388,15 +388,14 @@ def file_reassemble():
                 head = b'\xff\xd8\xff\xe0\x00\x10JFIF'
                 end = b'\xff\xd9'
                 file = raw_data[raw_data.index(head):raw_data.index(end) + 2]
-                with open('./testfile/image.jpg', 'wb') as f:
-                    f.write(file)
-                QMessageBox.information(ui, '提示', '重组成功', QMessageBox.Yes)
+                ftype = 'jpg'
+                save_file(file, ftype)
             elif b'\x89PNG' in raw_data:
                 head = b'\x89PNG'
                 end = b'\x00\x00\x00\x00IEND\xaeB\x60\x82'
                 file = raw_data[raw_data.index(head):raw_data.index(end) + len(end)]
-                with open('./testfile/image.png', 'wb') as f:
-                    f.write(file)
+                ftype = 'png'
+                save_file(file, ftype)
                 QMessageBox.information(ui, '提示', '重组成功', QMessageBox.Yes)
             else:
                 QMessageBox.warning(ui, '提示', '尝试重组失败', QMessageBox.Yes)
@@ -404,3 +403,16 @@ def file_reassemble():
             QMessageBox.warning(ui, '提示', '尝试重组失败', QMessageBox.Yes)
     else:
         QMessageBox.warning(ui, '提示', '没有选择数据包', QMessageBox.Yes)
+
+
+def save_file(file, ftype):
+    filepath, _ = QFileDialog.getSaveFileName(
+        ui,  # 父窗口对象
+        "保存重组文件",  # 标题
+        "./save/",  # 起始目录
+        f"{ftype.upper()} Files (*.{ftype});;All Files (*)"  # 选择类型过滤项，过滤内容在括号中
+    )
+    if filepath:
+        with open(filepath, 'wb') as f:
+            f.write(file)
+            QMessageBox.information(ui, '提示', '重组成功', QMessageBox.Yes)

@@ -11,7 +11,6 @@ class Filter:
 
     def translate(self):
         filter_parts = []
-        print(self.src, self.dst, self.sport, self.dport, self.protocol)
         if self.src:
             filter_parts.append('src host ' + self.src)
         if self.dst:
@@ -22,5 +21,4 @@ class Filter:
             filter_parts.append('dst port ' + self.dport)
         if self.protocol:
             filter_parts.append(self.protocol)
-        print(self.connector.join(filter_parts))
         return self.connector.join(filter_parts)

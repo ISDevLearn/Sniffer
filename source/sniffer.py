@@ -124,7 +124,8 @@ class Sniffer:
         length = len(p)
         info = self.get_info(protocol)
         packet_info = PacketInfo()
-        packet_info.from_args(self.number, packet_time, src, dst, protocol, length, info, raw_data, hex_info)
+        payload = str(bytes(p.payload.payload.payload))
+        packet_info.from_args(self.number, packet_time, src, dst, protocol, length, info, raw_data, hex_info, payload)
         self.packets.append(packet_info)
 
         self.signals.update_table.emit(packet_info)

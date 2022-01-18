@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>PyQt Playground</string>
+   <string>BabySniffer</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="font">
@@ -671,8 +671,6 @@ p, li { white-space: pre-wrap; }
     <addaction name="action_filter"/>
     <addaction name="action_show_details"/>
     <addaction name="action_reassemble"/>
-    <addaction name="action_choose_file_type"/>
-    <addaction name="action_search_to_file"/>
     <addaction name="action_tcp_to_file"/>
    </widget>
    <widget class="QMenu" name="menu_H">
@@ -708,7 +706,6 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_clean_all"/>
    <addaction name="action_open_file"/>
    <addaction name="action_save_as"/>
-   <addaction name="action_back"/>
   </widget>
   <widget class="QToolBar" name="toolBar_2">
    <property name="font">
@@ -728,8 +725,6 @@ p, li { white-space: pre-wrap; }
    <addaction name="action_show_details"/>
    <addaction name="action_filter"/>
    <addaction name="action_reassemble"/>
-   <addaction name="action_choose_file_type"/>
-   <addaction name="action_search_to_file"/>
    <addaction name="action_tcp_to_file"/>
    <addaction name="action_exit"/>
   </widget>
@@ -868,49 +863,16 @@ p, li { white-space: pre-wrap; }
     <string>Ctrl+M</string>
    </property>
   </action>
-  <action name="action_choose_file_type">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/chooseFileType.png</normaloff>img/chooseFileType.png</iconset>
-   </property>
-   <property name="text">
-    <string>选择文件类型</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+P</string>
-   </property>
-  </action>
-  <action name="action_back">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/back.png</normaloff>img/back.png</iconset>
-   </property>
-   <property name="text">
-    <string>返回</string>
-   </property>
-   <property name="toolTip">
-    <string>返回</string>
-   </property>
-  </action>
-  <action name="action_search_to_file">
-   <property name="icon">
-    <iconset>
-     <normaloff>img/searchToFile.png</normaloff>img/searchToFile.png</iconset>
-   </property>
-   <property name="text">
-    <string>SearchToFile</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+H</string>
-   </property>
-  </action>
   <action name="action_tcp_to_file">
    <property name="icon">
     <iconset>
      <normaloff>img/tcpToFile.png</normaloff>img/tcpToFile.png</iconset>
    </property>
    <property name="text">
-    <string>TcpToFile</string>
+    <string>文件重组</string>
+   </property>
+   <property name="toolTip">
+    <string>文件重组</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>

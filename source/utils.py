@@ -7,7 +7,7 @@ import sniffer
 import filter
 import json
 import time
-
+import ast
 
 ui: QWidget
 s: sniffer.Sniffer
@@ -89,6 +89,7 @@ def set_toolbar():
     ui.action_open_file.triggered.connect(load)
     ui.action_show_details.triggered.connect(lambda: ui.tab.setCurrentIndex(0))
     ui.action_filter.triggered.connect(lambda: ui.tab.setCurrentIndex(3))
+    ui.action_tcp_to_file.triggered.connect(file_reassemble)
 
 
 def set_if_box():
@@ -158,6 +159,7 @@ def clear():
     s.clear()
 
 
+# 清除数据包显示表
 def clear_table():
     ui.table.clearContents()
     ui.table.setRowCount(0)
@@ -304,6 +306,7 @@ def search():
             add_row(p)
 
 
+# 获取过滤器
 def get_filter():
     src = ui.filter_src.text()
     dst = ui.filter_dst.text()
@@ -318,29 +321,32 @@ def get_filter():
 
 
 def save():
-    save_list = []
-    assemble_rows = ui.table.selectedIndexes()
-    rows = set(tmp_row.row() for tmp_row in assemble_rows)
-    if len(rows) > 0:
-        for row in rows:
-            number = int(ui.table.item(row, 0).text()) - 1
-            save_list.append(s.packets[number].to_dict())
-        for i, save_dict in enumerate(sorted(save_list, key=lambda x: x['time'])):
-            save_dict['number'] = i + 1
-        # filename = './save/' + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + '.json'
-        filepath, _ = QFileDialog.getSaveFileName(
-            ui,  # 父窗口对象
-            "保存文件",  # 标题
-            "./save/",  # 起始目录
-            "json类型 (*.json);;All Files (*)"  # 选择类型过滤项，过滤内容在括号中
-        )
-        if filepath:
-            with open(filepath, 'w') as f:
-                f.write(json.dumps(save_list))
-                f.close()
-            QMessageBox.information(ui, '提示', '保存成功', QMessageBox.Yes)
-    else:
-        QMessageBox.warning(ui, "警告", "至少选择一个包。", QMessageBox.Yes)
+    try:
+        save_list = []
+        assemble_rows = ui.table.selectedIndexes()
+        rows = set(tmp_row.row() for tmp_row in assemble_rows)
+        if len(rows) > 0:
+            for row in rows:
+                number = int(ui.table.item(row, 0).text()) - 1
+                save_list.append(s.packets[number].to_dict())
+            for i, save_dict in enumerate(sorted(save_list, key=lambda x: x['time'])):
+                save_dict['number'] = i + 1
+            # filename = './save/' + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + '.json'
+            filepath, _ = QFileDialog.getSaveFileName(
+                ui,  # 父窗口对象
+                "保存文件",  # 标题
+                "./save/",  # 起始目录
+                "json类型 (*.json);;All Files (*)"  # 选择类型过滤项，过滤内容在括号中
+            )
+            if filepath:
+                with open(filepath, 'w') as f:
+                    f.write(json.dumps(save_list))
+                    f.close()
+                QMessageBox.information(ui, '提示', '保存成功', QMessageBox.Yes)
+        else:
+            QMessageBox.warning(ui, "警告", "至少选择一个包。", QMessageBox.Yes)
+    except Exception as e:
+        print(e)
 
 
 def load():
@@ -363,3 +369,51 @@ def load():
         except Exception:
             QMessageBox.warning(ui, "警告", "读取出现异常", QMessageBox.Yes)
 
+
+def file_reassemble():
+    table: QTableWidget = ui.table
+    assemble_rows = table.selectedIndexes()
+    row_set = set(tmp_row.row() for tmp_row in assemble_rows)
+    if len(row_set) >= 1:
+        reassemble_packet_list = []
+        for tmp_row in row_set:
+            number = int(ui.table.item(tmp_row, 0).text()) - 1
+            if s.packets[number].payload:
+                reassemble_packet_list.append(s.packets[number])
+        reassemble_packet_list = sorted(reassemble_packet_list, key=lambda x: x.time)
+        raw_data = b""
+        for p in reassemble_packet_list:
+            raw_data += ast.literal_eval(p.payload)
+        try:
+            if b'\xff\xd8\xff\xe0\x00\x10JFIF' in raw_data:
+                head = b'\xff\xd8\xff\xe0\x00\x10JFIF'
+                end = b'\xff\xd9'
+                file = raw_data[raw_data.index(head):raw_data.index(end) + 2]
+                ftype = 'jpg'
+                save_file(file, ftype)
+            elif b'\x89PNG' in raw_data:
+                head = b'\x89PNG'
+                end = b'\x00\x00\x00\x00IEND\xaeB\x60\x82'
+                file = raw_data[raw_data.index(head):raw_data.index(end) + len(end)]
+                ftype = 'png'
+                save_file(file, ftype)
+                QMessageBox.information(ui, '提示', '重组成功', QMessageBox.Yes)
+            else:
+                QMessageBox.warning(ui, '提示', '尝试重组失败', QMessageBox.Yes)
+        except:
+            QMessageBox.warning(ui, '提示', '尝试重组失败', QMessageBox.Yes)
+    else:
+        QMessageBox.warning(ui, '提示', '没有选择数据包', QMessageBox.Yes)
+
+
+def save_file(file, ftype):
+    filepath, _ = QFileDialog.getSaveFileName(
+        ui,  # 父窗口对象
+        "保存重组文件",  # 标题
+        "./save/",  # 起始目录
+        f"{ftype.upper()} Files (*.{ftype});;All Files (*)"  # 选择类型过滤项，过滤内容在括号中
+    )
+    if filepath:
+        with open(filepath, 'wb') as f:
+            f.write(file)
+            QMessageBox.information(ui, '提示', '重组成功', QMessageBox.Yes)

@@ -9,7 +9,6 @@ import json
 import time
 import ast
 
-
 ui: QWidget
 s: sniffer.Sniffer
 reassembler: Reassembler
@@ -160,6 +159,7 @@ def clear():
     s.clear()
 
 
+# 清除数据包显示表
 def clear_table():
     ui.table.clearContents()
     ui.table.setRowCount(0)
@@ -306,6 +306,7 @@ def search():
             add_row(p)
 
 
+# 获取过滤器
 def get_filter():
     src = ui.filter_src.text()
     dst = ui.filter_dst.text()
@@ -320,32 +321,32 @@ def get_filter():
 
 
 def save():
- try:
-    save_list = []
-    assemble_rows = ui.table.selectedIndexes()
-    rows = set(tmp_row.row() for tmp_row in assemble_rows)
-    if len(rows) > 0:
-        for row in rows:
-            number = int(ui.table.item(row, 0).text()) - 1
-            save_list.append(s.packets[number].to_dict())
-        for i, save_dict in enumerate(sorted(save_list, key=lambda x: x['time'])):
-            save_dict['number'] = i + 1
-        # filename = './save/' + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + '.json'
-        filepath, _ = QFileDialog.getSaveFileName(
-            ui,  # 父窗口对象
-            "保存文件",  # 标题
-            "./save/",  # 起始目录
-            "json类型 (*.json);;All Files (*)"  # 选择类型过滤项，过滤内容在括号中
-        )
-        if filepath:
-            with open(filepath, 'w') as f:
-                f.write(json.dumps(save_list))
-                f.close()
-            QMessageBox.information(ui, '提示', '保存成功', QMessageBox.Yes)
-    else:
-        QMessageBox.warning(ui, "警告", "至少选择一个包。", QMessageBox.Yes)
- except Exception as e:
-     print(e)
+    try:
+        save_list = []
+        assemble_rows = ui.table.selectedIndexes()
+        rows = set(tmp_row.row() for tmp_row in assemble_rows)
+        if len(rows) > 0:
+            for row in rows:
+                number = int(ui.table.item(row, 0).text()) - 1
+                save_list.append(s.packets[number].to_dict())
+            for i, save_dict in enumerate(sorted(save_list, key=lambda x: x['time'])):
+                save_dict['number'] = i + 1
+            # filename = './save/' + time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()) + '.json'
+            filepath, _ = QFileDialog.getSaveFileName(
+                ui,  # 父窗口对象
+                "保存文件",  # 标题
+                "./save/",  # 起始目录
+                "json类型 (*.json);;All Files (*)"  # 选择类型过滤项，过滤内容在括号中
+            )
+            if filepath:
+                with open(filepath, 'w') as f:
+                    f.write(json.dumps(save_list))
+                    f.close()
+                QMessageBox.information(ui, '提示', '保存成功', QMessageBox.Yes)
+        else:
+            QMessageBox.warning(ui, "警告", "至少选择一个包。", QMessageBox.Yes)
+    except Exception as e:
+        print(e)
 
 
 def load():
